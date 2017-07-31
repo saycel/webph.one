@@ -1,0 +1,15 @@
+{
+  "dir": "ltr",
+  "lang": "en",
+  "name": "webph.one",
+  "scope": "/",
+  "display": "standalone",
+  "start_url": "./?utm_source=web_app_manifest",
+  "short_name": "webph.one",
+  "theme_color": "#0BAB4B",
+  "description": "An App for Community Cell Networks",
+  "orientation": "standalone",
+  "background_color": "#0BAB4B",
+  "related_applications": [],
+  "prefer_related_applications": false
+}
