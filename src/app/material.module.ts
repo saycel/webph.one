@@ -1,8 +1,14 @@
 import { NgModule } from '@angular/core';
-//import {} from '@angular/material';
+import { MdTabsModule, MdToolbarModule } from '@angular/material';
 
 @NgModule({
-  imports: [],
-  exports: [],
+  imports: [
+    MdTabsModule,
+    MdToolbarModule
+  ],
+  exports: [
+    MdTabsModule,
+    MdToolbarModule
+  ],
 })
 export class CustomMaterialModule { }

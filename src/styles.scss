@@ -1,0 +1,47 @@
+/* You can add global styles to this file, and also import other style files */
+
+body, html {
+    margin: 0 auto;
+    padding: 0 auto;
+}
+
+@import '~@angular/material/theming';
+
+@include mat-core();
+
+$web-phone-primary: mat-palette($mat-yellow);
+$web-phone-accent:  mat-palette($mat-pink, A200, A100, A400);
+$web-phone-warn:    mat-palette($mat-red);
+$web-phone-theme:   mat-light-theme($web-phone-primary, $web-phone-accent, $web-phone-warn);
+
+@include angular-material-theme($web-phone-theme);
+
+.topbar {
+    background: green;
+
+    a {
+        color: #fff;
+        display: flex;
+        flex:1;
+        text-align: center;
+        text-transform: uppercase;
+
+        span {
+            display: block;
+            width: 100%;
+            text-align: center;
+        }
+    }
+};
+.topbar > div {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+}
+mat-tab-nav-bar {
+    border:0px;
+};
+
+.mat-ink-bar {
+    height: 4px !important;
+}
