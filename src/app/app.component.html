@@ -1,5 +1,10 @@
-<div style="text-align:center">
-  <h1>
-    Welcome to {{title}}!
-  </h1>
-</div>
+<nav md-tab-nav-bar class="topbar">
+  <a md-tab-link
+     *ngFor="let link of links"
+     [routerLink]="link.link"
+     routerLinkActive #rla="routerLinkActive"
+     [active]="rla.isActive">
+     <span>{{link.label}}</span>
+  </a>
+</nav>
+<router-outlet></router-outlet>
