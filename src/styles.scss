@@ -3,6 +3,7 @@
 body, html {
     margin: 0 auto;
     padding: 0 auto;
+    background: #f2f2f2;
 }
 
 @import '~@angular/material/theming';
@@ -16,6 +17,8 @@ $web-phone-theme:   mat-light-theme($web-phone-primary, $web-phone-accent, $web-
 
 @include angular-material-theme($web-phone-theme);
 
+
+//TOP HEADER
 .topbar {
     background: green;
 
@@ -42,6 +45,10 @@ mat-tab-nav-bar {
     border:0px;
 };
 
+.mat-tab-nav-bar {
+    border-bottom:3px solid #ffeb3b;
+};
+
 .mat-ink-bar {
-    height: 4px !important;
+    height: 6px !important;
 }
