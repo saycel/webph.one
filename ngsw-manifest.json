@@ -3,12 +3,7 @@
     "^\/assets\/ignore.*$"
   ],
   "routing": {
-    "index": "/index.html",
-    "routes": {
-      "/": {
-        "prefix": false
-      }
-    }
+    "index": "/index.html"
   },
   "push": {
     "showNotifications": true,
