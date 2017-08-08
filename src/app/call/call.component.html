@@ -1,3 +1,20 @@
-<p>
-  call works!
-</p>
+<div  class="number">
+  <div class="input">
+    {{number}}
+  </div>
+  <img class="clean" (click)="clean()" src="assets/clean.png"/>
+</div>
+<md-grid-list cols="3" rowHeight="4:3" class="dial-pad">
+  <md-grid-tile><button (click)="pushItem('1')" md-button>1</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('2')" md-button>2</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('3')" md-button>3</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('4')" md-button>4</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('5')" md-button>5</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('6')" md-button>6</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('7')" md-button>7</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('8')" md-button>8</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('9')" md-button>9</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('*')" md-button>*</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('0')" md-button>0</button></md-grid-tile>
+  <md-grid-tile><button (click)="pushItem('#')" md-button>#</button></md-grid-tile>
+</md-grid-list>
