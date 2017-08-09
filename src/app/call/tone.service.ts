@@ -66,6 +66,6 @@ export class ToneService {
     } else {
         this.stop();
     }
-    setTimeout(()=>this.stop(),230);
+    setTimeout(()=>this.stop(),150);
   }  
 }
