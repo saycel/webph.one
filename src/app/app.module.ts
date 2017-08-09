@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpModule } from '@angular/http';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router'  ;
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -46,13 +47,13 @@ export const appRoutes: Routes  = [
       appRoutes,
       {
         preloadingStrategy: PreloadAllModules,
-        useHash: true,
-        enableTracing: true // <-- debugging purposes only
+        useHash: true
       }
     ),
     CustomMaterialModule,
     BrowserAnimationsModule,
     BrowserModule,
+    HttpModule,
     CallModule,
     ShareModule,
     DirectoryModule
