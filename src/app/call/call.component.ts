@@ -1,17 +1,35 @@
-import { Component, OnInit } from '@angular/core';
+import {DomSanitizer} from '@angular/platform-browser';
+import {MdIconRegistry} from '@angular/material';
+import { Component, HostListener } from '@angular/core';
 import { ToneService } from './tone.service';
+import { jsSipService } from './jssip.service';
 
 @Component({
   selector: 'app-call',
   templateUrl: './call.component.html',
   styleUrls: ['./call.component.scss'],
-  providers: [ToneService]
+  providers: [ToneService, jsSipService]
 })
-export class CallComponent implements OnInit {
+export class CallComponent {
   number: string = '';
-  constructor(public toneService:ToneService) { }
 
-  ngOnInit() {
+  constructor(
+    public toneService:ToneService,
+    public jsSip:jsSipService,
+    iconRegistry: MdIconRegistry,
+    sanitizer: DomSanitizer
+  ) { 
+    iconRegistry.addSvgIcon(
+        'call-end',
+        sanitizer.bypassSecurityTrustResourceUrl('assets/call-end.svg'));
+  }
+
+  @HostListener('document:keypress', ['$event'])
+  handleKeyboardEvent(event: KeyboardEvent) { 
+    let reg = new RegExp("^[0-9]");
+    if (reg.test(event.key)) {
+      this.pushItem(event.key);
+    }    
   }
 
   pushItem(e) {
@@ -20,7 +38,14 @@ export class CallComponent implements OnInit {
   }
 
   clean() {
-    this.number = '';
+    this.number = this.number.substring(0, this.number.length - 1);
   }
 
+  call() {
+    this.jsSip.call(this.number)
+  }
+
+  hangup() {
+    this.jsSip.hangup();
+  }
 }
