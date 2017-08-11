@@ -42,10 +42,10 @@ export class CallComponent {
   }
 
   call() {
-    this.jsSip.call(this.number);
+    this.jsSip.handleOutgoingCall('', this.number);
   }
 
   hangup() {
-    this.jsSip.hangup();
+    this.jsSip.handleHangup();
   }
 }

@@ -1,122 +1,273 @@
 import JsSIP from 'jssip';
 import { Subject } from 'rxjs/Subject';
-import AudioPlayer from './sounds.service';
-
-/* DEGUB */
-JsSIP.debug.enable('JsSIP:*');
+import audioPlayer from './sounds.service';
+import { ToneService } from './tone.service';
 
 export class JsSipService {
-  private audioPlayer = AudioPlayer;
-  public events: Subject<string>;
-  public status = 'hangup';
-  private eventHandlers: object;
-  private socket: any;
-  private ua: any;
-  private callOptions: object;
-
-  private configuration = {
-    display_name        : 'webrtc',
-    uri                 : 'webrtc@rhizortc.specialstories.org',
-    password            : 'verysecret',
-    registrar_server    : null,
-    contact_uri         : null,
-    authorization_user  : null,
-    instance_id         : null,
-    session_timers      : true,
-    use_preloaded_route : false,
-    pcConfig            :
-    {
-        rtcpMuxPolicy : 'negotiate',
-        iceServers    :
-        [
-            { urls : [ 'stun:stun.l.google.com:19302' ] }
-        ]
-    },
-    callstats           :
-    {
-        enabled   : false,
-        AppID     : null,
-        AppSecret : null
-    }
-  };
-
-  constructor() {
-    this.events = new Subject<string>();
-    this.eventHandlers = {
-      'progress': (e) => {
-       this.events.next('progress');
-      },
-      'failed': (e) => {
-        this.events.next('failed');
-        this.status = 'hangup';
-      },
-      'ended': (e) => {
-        this.events.next('ended');
-        this.status = 'hangup';
-      },
-      'confirmed': (e) => {
-        this.events.next('confirmed');
-      }
-    };
-
-    this.callOptions = {
-      'eventHandlers'    : this.eventHandlers,
-      'mediaConstraints' : { 'audio': true, 'video': false },
-      'pcConfig' : this.configuration.pcConfig || { iceServers: [] },
-      'rtcOfferConstraints' : {
-            offerToReceiveAudio : 1,
-            offerToReceiveVideo : 0
-       },
-       'sessionTimersExpires' : 120
-    };
-
-    this.socket = new JsSIP.WebSocketInterface('wss://rhizortc.specialstories.org:8443');
-    this.socket.via_transport = 'auto';
-    this.configuration['sockets'] = [this.socket];
-    this.ua = new JsSIP.UA(this.configuration);
-    this.ua.start();
-  }
-
-  call(number) {
-    this.status = 'calling';
-    //const session = this.ua.call('sip:pearllagoon@rhizortc.specialstories.org', this.callOptions);
-    const session = this.ua.call('sip:385485876@did.callwithus.com', this.callOptions);
-
-    session.on('progress', () => {
-      this.audioPlayer.play('ringback', null);
-    });
-
-    session.on('failed', (data) => {
-      this.audioPlayer.stop('ringback');
-      this.audioPlayer.play('rejected', null);
-    });
-
-    session.on('ended', () =>	{
-      this.audioPlayer.stop('ringback');
-    });
-
-    session.on('accepted', () => {
-        this.audioPlayer.stop('ringback');
-        this.audioPlayer.play('answered', null);
-        setTimeout(() => {
-        console.log('Sending tone ' + number + '#');
-
-        const tones = number + '#';
-        let dtmfSender = null;
-        if (session.connection.getSenders) {
-            dtmfSender = session.connection.getSenders()[0].dtmf;
-        } else {
-            const peerconnection = session.connection;
-            const localStream = peerconnection.getLocalStreams()[0];
-            dtmfSender = session.connection.createDTMFSender(localStream.getAudioTracks()[0]);
+    public state: any;
+    private audioElement: HTMLAudioElement;
+    private toneService: ToneService;
+    private _ua: any;
+    public settings = {
+        display_name        : 'webrtc',
+        uri                 : 'webrtc@rhizortc.specialstories.org',
+        password            : 'verysecret',
+        socket              :
+        {
+            uri           : 'wss://rhizortc.specialstories.org:8443',
+            via_transport : 'auto',
+        },
+        registrar_server    : null,
+        contact_uri         : null,
+        authorization_user  : null,
+        instance_id         : null,
+        session_timers      : true,
+        use_preloaded_route : false,
+        pcConfig            :
+        {
+            rtcpMuxPolicy : 'negotiate',
+            iceServers    :
+            [
+                { urls : [ 'stun:stun.l.google.com:19302' ] }
+            ]
+        },
+        callstats           :
+        {
+            enabled   : false,
+            AppID     : null,
+            AppSecret : null
         }
-        dtmfSender.insertDTMF(tones, 400, 50);
-        }, 2000);
-    });
-  }
+    };
 
-  hangup() {
-      this.status = 'hangup';
-      this.ua.terminateSessions();
-  }
+    constructor() {
+        this.state = {
+            status          : 'disconnected',
+            session         : null,
+            incomingSession : null
+        };
+
+        this.toneService = new ToneService;
+
+        this._ua = null;
+        const socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
+        if (this.settings.socket.via_transport !== 'auto') {
+            socket.via_transport = this.settings.socket.via_transport;
+        }
+
+        try {
+            JsSIP.debug.enable('JsSIP:*');
+            this._ua = new JsSIP.UA({
+                uri                 : this.settings.uri,
+                password            : this.settings.password,
+                display_name        : this.settings.display_name,
+                sockets             : [ socket ],
+                registrar_server    : this.settings.registrar_server,
+                contact_uri         : this.settings.contact_uri,
+                authorization_user  : this.settings.authorization_user,
+                instance_id         : this.settings.instance_id,
+                session_timers      : this.settings.session_timers,
+                use_preloaded_route : this.settings.use_preloaded_route
+            });
+
+            this.audioElement = document.body.appendChild(document.createElement('audio'));
+
+        } catch (error) {
+            console.log('JsSIP config error', error);
+            return;
+        }
+
+        this._ua.on('connecting', () => {
+            this.setState(
+                {
+                    uri    : this._ua.configuration.uri.toString(),
+                    status : 'connecting'
+                });
+        });
+
+        this._ua.on('connected', () => {
+            this.setState({ status: 'connected' });
+            this._ua.register();
+        });
+
+        this._ua.on('disconnected', () => {
+            this.setState({ status: 'disconnected' });
+        });
+
+        this._ua.on('registered', () => {
+            this.setState({ status: 'registered' });
+        });
+
+        this._ua.on('registering', () => {
+            console.log('registering');
+        });
+
+        this._ua.on('registrationFailed', () => {
+            console.log('registrationFailed');
+        });
+
+        this._ua.on('unregistered', () => {
+            if (this._ua.isConnected()) {
+                this.setState({ status: 'connected' });
+            } else {
+                this.setState({ status: 'disconnected' });
+            }
+        });
+
+        this._ua.on('registrationFailed', (data) => {
+            if (this._ua.isConnected()) {
+                this.setState({ status: 'connected' });
+            } else {
+                this.setState({ status: 'disconnected' });
+            }
+        });
+
+        this._ua.on('newRTCSession', (data) => {
+            if (data.originator === 'local') {
+                return;
+            }
+
+            const state = this.state;
+            const session = data.session;
+
+            // Avoid if busy or other incoming
+            if (state.session || state.incomingSession) {
+                session.terminate(
+                    {
+                        status_code   : 486,
+                        reason_phrase : 'Busy Here'
+                    });
+                return;
+            }
+
+            audioPlayer.play('ringing');
+            this.setState({ incomingSession: session });
+
+            session.on('failed', () => {
+                audioPlayer.stop('ringing');
+                this.setState({
+                    session         : null,
+                    incomingSession : null
+                });
+            });
+
+            session.on('ended', () => {
+                this.setState({
+                    session         : null,
+                    incomingSession : null
+                });
+            });
+
+            session.on('accepted', () => {
+                audioPlayer.stop('ringing');
+                this.setState({
+                    session         : session,
+                    incomingSession : null
+                });
+            });
+        });
+
+        this._ua.start();
+
+        if (this.settings.callstats.enabled) {
+            /*callstatsjssip(
+                this._ua,
+                this.settings.callstats.AppID,
+                this.settings.callstats.AppSecret
+            );*/
+        }
+    }
+
+    setState(newState) {
+        this.state = Object.assign({}, this.state, newState);
+        return;
+    }
+
+    handleOutgoingCall(uri, dtmfs) {
+        // CHANGE URI FOR TEST
+        uri = 'sip:385485876@did.callwithus.com';
+        // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
+        // uri = 'hello@onsip.com';
+        const session = this._ua.call(uri, {
+            pcConfig : this.settings.pcConfig || { iceServers: [] },
+            mediaConstraints :
+            {
+                audio : true,
+                video : false
+            },
+            rtcOfferConstraints :
+            {
+                offerToReceiveAudio : 1,
+                offerToReceiveVideo : 0
+            },
+            sessionTimersExpires : 120
+        });
+
+        session.on('connecting', () => {
+            this.toneService.startRinging();
+            this.setState({ session });
+        });
+
+        session.on('progress', () => {
+        });
+
+        session.on('failed', (data) => {
+            this.toneService.stopRinging();
+            audioPlayer.play('rejected');
+            this.setState({ session: null });
+        });
+
+        session.on('ended', () => {
+            this.toneService.stopRinging();
+            audioPlayer.play('rejected');
+            this.setState({ session: null });
+        });
+
+        session.connection.onaddstream = (e) => {
+            this.audioElement.srcObject = e.stream;
+            this.audioElement.play();
+        };
+
+        session.connection.onremovestream = (e) => {
+            this.audioElement.pause();
+        };
+
+        session.on('accepted', () => {
+            this.toneService.stopRinging();
+            audioPlayer.play('answered');
+
+            setTimeout(() => {
+                const tones = dtmfs + '#';
+                let dtmfSender = null;
+                if (session.connection.signalingState !== 'closed') {
+                    if (session.connection.getSenders) {
+                        dtmfSender = session.connection.getSenders()[0].dtmf;
+                    } else {
+                        const peerconnection = session.connection;
+                        const localStream = peerconnection.getLocalStreams()[0];
+                        dtmfSender = session.connection.createDTMFSender(localStream.getAudioTracks()[0]);
+                    }
+                    dtmfSender.insertDTMF(tones, 400, 50);
+                    console.log('Sending DTMF codes', tones);
+                }
+
+            }, 2000);
+        });
+    }
+
+    handleAnswerIncoming() {
+        const session = this.state.incomingSession;
+        session.answer({
+            pcConfig : this.settings.pcConfig || { iceServers: [] }
+        });
+    }
+
+    handleRejectIncoming() {
+        const session = this.state.incomingSession;
+        session.terminate();
+    }
+
+    handleHangup() {
+        this.state.session.terminate();
+        this.setState({session: null});
+    }
 }
