@@ -1,7 +1,6 @@
 import FILES from '../sounds';
 
 const SOUNDS = [
-     {name: 'ringback', audio: new Audio(FILES['ringback']), volume: 1.0 },
      {name: 'ringing', audio: new Audio(FILES['ringing']),  volume: 1.0 },
      {name: 'answered', audio: new Audio(FILES['answered']), volume: 1.0 },
      {name: 'rejected', audio: new Audio(FILES['rejected']), volume: 0.5 }
@@ -31,12 +30,8 @@ export default {
      * @param {String} name - Sound name
      * @param {[Float]} relativeVolume - Relative volume (0.0 - 1.0)
      */
-    play(name, relativeVolume) {
+    play(name, loop = false) {
         this.initialize();
-
-        if (typeof relativeVolume !== 'number') {
-            relativeVolume = 1.0;
-        }
 
         const sound = SOUNDS.filter(function(x){ return x.name === name; })[0];
 
@@ -47,7 +42,8 @@ export default {
         try {
             sound.audio.pause();
             sound.audio.currentTime = 0.0;
-            sound.audio.volume = (sound.volume || 1.0) * relativeVolume;
+            sound.audio.volume = (sound.volume || 1.0);
+            sound.audio.loop = loop;
             sound.audio.play();
         } catch (error) {
         }
