@@ -1,3 +1,41 @@
-<p>
-  call works!
-</p>
+<div class="pad">
+   <div class="number">
+     <div class="input">
+          {{number}}
+        </div>
+        <img class="clean" (click)="clean()" src="assets/clean.png"/>
+  </div>
+    <div class="dial">
+        <div class="line">
+            <button md-button disableRipple (click)="pushItem('3')">3</button>
+            <button md-button disableRipple (click)="pushItem('2')">2</button>
+            <button md-button disableRipple (click)="pushItem('1')">1</button>
+        </div>
+        <div class="line">
+            <button md-button disableRipple (click)="pushItem('6')">6</button>
+            <button md-button disableRipple (click)="pushItem('5')">5</button>
+            <button md-button disableRipple (click)="pushItem('4')">4</button>
+        </div>
+        <div class="line">
+            <button md-button disableRipple (click)="pushItem('9')">9</button>
+            <button md-button disableRipple (click)="pushItem('8')">8</button>
+            <button md-button disableRipple (click)="pushItem('7')">7</button>
+        </div>
+        <div class="line">
+            <button md-button disableRipple (click)="pushItem('#')">#</button>
+            <button md-button disableRipple (click)="pushItem('0')">0</button>
+            <button md-button disableRipple (click)="pushItem('*')">*</button>
+        </div>
+  </div>
+  <div class="actions">
+    <button md-raised-button class="call" (click)="call()">Call</button>
+    <button md-raised-button class="hangup" (click)="hangup()"><md-icon svgIcon="call-end"></md-icon></button>
+  </div>
+</div>
+
+<div class="call-in-progess" *ngIf="jsSip.state.session">
+  <div class="box">
+    Calling {{number}}<br><br>
+    <button md-raised-button class="hangup" (click)="hangup()"><md-icon svgIcon="call-end"></md-icon></button>
+  </div>
+</div>
