@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { DirectoryComponent } from './directory.component'
 
 const routes: Routes = [{
-    path: '',
+    path: 'directory',
     component: DirectoryComponent,
     pathMatch: 'full'
 }];
