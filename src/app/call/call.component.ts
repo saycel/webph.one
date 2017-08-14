@@ -14,7 +14,7 @@ export class CallComponent implements OnInit {
 
   constructor(
     private toneService: ToneService,
-    private jsSip: JsSipService,
+    public jsSip: JsSipService,
     private route: ActivatedRoute,
     private router: Router
   ) { }

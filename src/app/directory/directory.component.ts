@@ -11,7 +11,7 @@ import { DirectoryService, DirectoryI, DirectoryItemI } from '../directory.servi
 
 export class DirectoryComponent {
 
-  private directories: Observable<DirectoryI[]>;
+  public directories: Observable<DirectoryI[]>;
 
   constructor(private _router: Router, directoryService: DirectoryService ) {
     this.directories = directoryService.get();
