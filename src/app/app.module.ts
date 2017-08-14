@@ -1,17 +1,21 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
-import { Routes, RouterModule, PreloadAllModules } from '@angular/router'  ;
+import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
-import { CustomMaterialModule } from './material.module'
+import { CustomMaterialModule } from './material.module';
 
 import { AppComponent } from './app.component';
 
 import { CallModule } from './call/call.module';
 import { DirectoryModule } from './directory/directory.module';
 import { ShareModule } from './share/share.module';
+
+import { ToneService } from './tone.service';
+import { JsSipService } from './jssip.service';
+import { DirectoryService } from './directory.service';
 
 export const appRoutes: Routes  = [
   {
@@ -58,7 +62,7 @@ export const appRoutes: Routes  = [
     ShareModule,
     DirectoryModule
   ],
-  providers: [],
+  providers: [ToneService, JsSipService, DirectoryService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
