@@ -42,7 +42,8 @@ export class JsSipService {
         }
     };
 
-    constructor(@Inject(ToneService) toneService: ToneService) {
+    constructor(toneService: ToneService) {
+        this.toneService = new ToneService;
         this.state = {
             status          : 'disconnected',
             session         : null,
