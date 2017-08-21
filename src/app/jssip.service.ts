@@ -186,7 +186,7 @@ export class JsSipService {
 
     handleOutgoingCall(uri, dtmfs) {
         // CHANGE URI FOR TEST
-        uri = 'sip:385485876@did.callwithus.com';
+        uri = dtmfs + '@sip.rhizomatica.org';
         // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
         // uri = 'hello@onsip.com';
         const session = this._ua.call(uri, {
@@ -236,23 +236,6 @@ export class JsSipService {
         session.on('accepted', () => {
             this.toneService.stopRinging();
             audioPlayer.play('answered');
-
-            setTimeout(() => {
-                const tones = dtmfs + '#';
-                let dtmfSender = null;
-                if (session.connection.signalingState !== 'closed') {
-                    if (session.connection.getSenders) {
-                        dtmfSender = session.connection.getSenders()[0].dtmf;
-                    } else {
-                        const peerconnection = session.connection;
-                        const localStream = peerconnection.getLocalStreams()[0];
-                        dtmfSender = session.connection.createDTMFSender(localStream.getAudioTracks()[0]);
-                    }
-                    dtmfSender.insertDTMF(tones, 400, 50);
-                    console.log('Sending DTMF codes', tones);
-                }
-
-            }, 2000);
         });
     }
 
