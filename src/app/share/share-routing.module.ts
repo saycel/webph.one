@@ -4,7 +4,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { ShareComponent } from './share.component';
 
 const routes: Routes = [{
-    path: '',
+    path: 'share',
     component: ShareComponent,
     pathMatch: 'full'
 }];

@@ -1,27 +1,26 @@
-import {DomSanitizer} from '@angular/platform-browser';
-import {MdIconRegistry} from '@angular/material';
-import { Component, HostListener } from '@angular/core';
-import { ToneService } from './tone.service';
-import { JsSipService } from './jssip.service';
+import { Component, HostListener, OnInit } from '@angular/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+
+import { ToneService } from '../tone.service';
+import { JsSipService } from '../jssip.service';
 
 @Component({
   selector: 'app-call',
   templateUrl: './call.component.html',
-  styleUrls: ['./call.component.scss'],
-   providers: [ JsSipService, ToneService]
+  styleUrls: ['./call.component.scss']
 })
-export class CallComponent {
+export class CallComponent implements OnInit {
   number = '';
 
   constructor(
-    public toneService: ToneService,
+    private toneService: ToneService,
     public jsSip: JsSipService,
-    iconRegistry: MdIconRegistry,
-    sanitizer: DomSanitizer
-  ) {
-    iconRegistry.addSvgIcon(
-        'call-end',
-        sanitizer.bypassSecurityTrustResourceUrl('assets/call-end.svg'));
+    private route: ActivatedRoute,
+    private router: Router
+  ) { }
+
+  ngOnInit() {
+    this.number = this.route.snapshot.paramMap.get('number') || '';
   }
 
   @HostListener('document:keypress', ['$event'])

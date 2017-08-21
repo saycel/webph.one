@@ -1,8 +1,11 @@
+import { Injectable, Inject } from '@angular/core';
+
 import JsSIP from 'jssip';
 import { Subject } from 'rxjs/Subject';
 import audioPlayer from './sounds.service';
 import { ToneService } from './tone.service';
 
+@Injectable()
 export class JsSipService {
     public state: any;
     private audioElement: HTMLAudioElement;
@@ -39,14 +42,13 @@ export class JsSipService {
         }
     };
 
-    constructor() {
+    constructor(toneService: ToneService) {
+        this.toneService = new ToneService;
         this.state = {
             status          : 'disconnected',
             session         : null,
             incomingSession : null
         };
-
-        this.toneService = new ToneService;
 
         this._ua = null;
         const socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);

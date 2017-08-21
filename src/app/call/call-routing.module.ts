@@ -4,7 +4,12 @@ import { Routes, RouterModule } from '@angular/router';
 import { CallComponent } from './call.component';
 
 const routes: Routes = [{
-    path: '',
+    path: 'call',
+    component: CallComponent,
+    pathMatch: 'full'
+},
+{
+    path: 'call/:number',
     component: CallComponent,
     pathMatch: 'full'
 }];

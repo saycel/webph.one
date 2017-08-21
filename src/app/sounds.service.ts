@@ -1,4 +1,4 @@
-import FILES from '../sounds';
+import FILES from './sounds';
 
 const SOUNDS = [
      {name: 'ringing', audio: new Audio(FILES['ringing']),  volume: 1.0 },
