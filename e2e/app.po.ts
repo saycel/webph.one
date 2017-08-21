@@ -1,6 +1,6 @@
 import { browser, by, element } from 'protractor';
 
-export class SaycelSipAppPage {
+export class RhizomaticaSipAppPage {
   navigateTo() {
     return browser.get('/');
   }
