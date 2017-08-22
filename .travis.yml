@@ -40,4 +40,4 @@ deploy:
   skip_cleanup: true
   script: rsync -r --delete-after --quiet $TRAVIS_BUILD_DIR/dist/ root@rhizortc.specialstories.org://var/www/webphone.rhizomatica.org
   on:
-    branch: develop
+    branch: rhizomatica
