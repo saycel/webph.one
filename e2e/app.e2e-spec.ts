@@ -1,10 +1,10 @@
-import { SaycelSipAppPage } from './app.po';
+import { RhizomaticaSipAppPage } from './app.po';
 
-describe('saycel-sip-app App', () => {
-  let page: SaycelSipAppPage;
+describe('rhizomatica-sip-app App', () => {
+  let page: RizomaticaSipAppPage;
 
   beforeEach(() => {
-    page = new SaycelSipAppPage();
+    page = new RizomaticaSipAppPage();
   });
 
   it('should display welcome message', () => {
