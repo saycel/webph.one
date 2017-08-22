@@ -3,7 +3,7 @@
 body, html {
     margin: 0 auto;
     padding: 0 auto;
-    background: #f2f2f2;
+    background: #EAEBEB;
     font-family: Roboto, "Helvetica Neue", sans-serif;
 }
 
@@ -11,8 +11,8 @@ body, html {
 
 @include mat-core();
 
-$web-phone-primary: mat-palette($mat-yellow);
-$web-phone-accent:  mat-palette($mat-pink, A200, A100, A400);
+$web-phone-primary: mat-palette($mat-deep-orange);
+$web-phone-accent:  mat-palette($mat-grey, A200, A100, A400);
 $web-phone-warn:    mat-palette($mat-red);
 $web-phone-theme:   mat-light-theme($web-phone-primary, $web-phone-accent, $web-phone-warn);
 
@@ -21,8 +21,7 @@ $web-phone-theme:   mat-light-theme($web-phone-primary, $web-phone-accent, $web-
 
 //TOP HEADER
 .topbar {
-    background: green;
-
+    background: #F3F3F3;
     a {
         color: #fff;
         display: flex;
@@ -47,9 +46,13 @@ mat-tab-nav-bar {
 };
 
 .mat-tab-nav-bar {
-    border-bottom:3px solid #ffeb3b;
+    border-bottom:3px solid #ED4E0F;
+    a {
+        color: #333
+    }
 };
 
 .mat-ink-bar {
     height: 6px !important;
+    background-color: #ED4E0F;
 }
