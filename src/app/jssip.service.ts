@@ -29,10 +29,7 @@ export class JsSipService {
         pcConfig            :
         {
             rtcpMuxPolicy : 'negotiate',
-            iceServers    :
-            [
-                { urls : [ 'stun:stun.l.google.com:19302' ] }
-            ]
+            iceServers    :  []
         },
         callstats           :
         {
