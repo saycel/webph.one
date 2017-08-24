@@ -1,3 +1,17 @@
-<p>
-  share works!
-</p>
+<div class="share-screen">  
+  <div class="share">
+    <h3>If you like our app please share it</h3>
+    <button md-button (click)="openShare()">Share</button>
+  </div>
+  <div class="contribute">
+    <p>
+      This app is developed by SayCel, Rhizomatica and LibreMesh.<br>
+      Want to contribute? Check out: <a href="https://github.com/saycel/webph.one" target="_blanck">Github/saycelph.one</a>
+    </p>
+  </div>
+  <div class="comments">
+    <p>Any Comments or suggestions?</p>
+    <textarea placeholder="We would love to hear from you!" [(ngModel)]="comment"></textarea>
+    <button md-button (click)="sendComments()">Send</button>
+  </div>
+</div>
