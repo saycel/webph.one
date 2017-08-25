@@ -5,7 +5,8 @@ import {
   MdButtonModule,
   MdGridListModule,
   MdIconModule,
-  MdListModule
+  MdListModule,
+  MdDialogModule
 } from '@angular/material';
 
 @NgModule({
@@ -15,7 +16,8 @@ import {
     MdButtonModule,
     MdGridListModule,
     MdIconModule,
-    MdListModule
+    MdListModule,
+    MdDialogModule
   ],
   exports: [
     MdTabsModule,
@@ -23,7 +25,8 @@ import {
     MdButtonModule,
     MdGridListModule,
     MdIconModule,
-    MdListModule
+    MdListModule,
+    MdDialogModule
   ],
 })
 export class CustomMaterialModule { }
