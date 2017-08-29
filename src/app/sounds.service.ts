@@ -1,9 +1,10 @@
 import FILES from './sounds';
 
 const SOUNDS = [
-     {name: 'ringing', audio: new Audio(FILES['ringing']),  volume: 1.0 },
      {name: 'answered', audio: new Audio(FILES['answered']), volume: 1.0 },
-     {name: 'rejected', audio: new Audio(FILES['rejected']), volume: 0.5 }
+     {name: 'rejected', audio: new Audio(FILES['rejected']), volume: 0.5 },
+     {name: 'hangup', audio: new Audio(FILES['hangup']),  volume: 1.0 },
+
 ];
 
 let initialized = false;
