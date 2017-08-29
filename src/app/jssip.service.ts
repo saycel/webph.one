@@ -217,7 +217,7 @@ export class JsSipService {
 
         session.on('ended', () => {
             this.toneService.stopRinging();
-            audioPlayer.play('rejected');
+            audioPlayer.play('hangup');
             this.setState({ session: null });
         });
 
