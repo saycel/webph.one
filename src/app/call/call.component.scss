@@ -49,6 +49,9 @@
         color: #333;
         min-width: 0px !important;
     }
+    button:focus /deep/ .mat-button-focus-overlay {
+     opacity: 0;
+    }
   }
 }
 
