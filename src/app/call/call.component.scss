@@ -1,7 +1,7 @@
 .pad {
   display: flex;
   width: 100%;
-  height: calc(100vh - 65px);
+  height: calc(100% - 65px);
   max-width: 450px;
   flex-direction: column;
   margin: 0 auto;
@@ -48,6 +48,9 @@
         font-size: 1.5em;
         color: #333;
         min-width: 0px !important;
+    }
+    button:focus /deep/ .mat-button-focus-overlay {
+     opacity: 0;
     }
   }
 }
