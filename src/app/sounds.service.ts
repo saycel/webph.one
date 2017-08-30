@@ -4,7 +4,8 @@ const SOUNDS = [
      {name: 'answered', audio: new Audio(FILES['answered']), volume: 1.0 },
      {name: 'rejected', audio: new Audio(FILES['rejected']), volume: 0.5 },
      {name: 'hangup', audio: new Audio(FILES['hangup']),  volume: 1.0 },
-
+     {name: 'error_404', audio: new Audio(FILES['error_404']),  volume: 1.0 },
+     {name: 'error_general', audio: new Audio(FILES['error_general']),  volume: 1.0 }
 ];
 
 let initialized = false;
@@ -31,7 +32,7 @@ export default {
      * @param {String} name - Sound name
      * @param {[Float]} relativeVolume - Relative volume (0.0 - 1.0)
      */
-    play(name, loop = false) {
+    play(name, loop = false): HTMLAudioElement {
         this.initialize();
 
         const sound = SOUNDS.filter(function(x){ return x.name === name; })[0];
@@ -46,6 +47,7 @@ export default {
             sound.audio.volume = (sound.volume || 1.0);
             sound.audio.loop = loop;
             sound.audio.play();
+            return sound.audio;
         } catch (error) {
         }
     },
@@ -59,5 +61,12 @@ export default {
 
         sound.audio.pause();
         sound.audio.currentTime = 0.0;
+    },
+
+    stopAll() {
+        SOUNDS.forEach(sound => {
+            sound.audio.pause();
+            sound.audio.currentTime = 0.0;
+        });
     }
 };
