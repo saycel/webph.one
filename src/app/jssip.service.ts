@@ -216,8 +216,11 @@ export class JsSipService {
                 case JsSIP.C.causes.NOT_FOUND:
                     message = audioPlayer.play('error_404');
                     break;
-                default:
+                case JsSIP.C.causes.CANCELED:
                     message = audioPlayer.play('rejected');
+                    break;
+                default:
+                    message = audioPlayer.play('error_general');
             }
 
             // To keep the screen active while the error message is playing
