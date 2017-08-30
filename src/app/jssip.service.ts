@@ -212,24 +212,38 @@ export class JsSipService {
         session.on('failed', (data) => {
             this.toneService.stopRinging();
             let message: HTMLAudioElement;
+
+            // To keep the screen active while the error message is playing
+            const addAudioEvent = (audio: HTMLAudioElement) => {
+                const onAudioEnded = (event) => {
+                    this.setState({ session: null });
+                    event.target.currentTime = 0;
+                    event.target.removeEventListener('ended', onAudioEnded, false);
+                };
+                audio.addEventListener('ended', onAudioEnded);
+            };
+
             switch (data.cause) {
                 case JsSIP.C.causes.NOT_FOUND:
                     message = audioPlayer.play('error_404');
+                    addAudioEvent(message);
                     break;
                 case JsSIP.C.causes.CANCELED:
                     message = audioPlayer.play('rejected');
+                    addAudioEvent(message);
+                    break;
+                case JsSIP.C.causes.BUSY:
+                    this.toneService.startBusyTone();
+                    setTimeout(() => {
+                        this.toneService.stopBusyTone();
+                        this.setState({ session: null });
+                    }, 5000);
                     break;
                 default:
                     message = audioPlayer.play('error_general');
+                    addAudioEvent(message);
             }
 
-            // To keep the screen active while the error message is playing
-            const onAudioEnded = (event) => {
-                this.setState({ session: null });
-                event.target.currentTime = 0;
-                event.target.removeEventListener('ended', onAudioEnded, false);
-            };
-            message.addEventListener('ended', onAudioEnded);
         });
 
         session.on('ended', () => {
