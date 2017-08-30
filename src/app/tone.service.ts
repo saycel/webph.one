@@ -99,6 +99,20 @@ export class ToneService {
     this.ringerLFOBuffer = arrayBuffer;
   }
 
+  createBusyTone() {
+    const channels = 1;
+    const sampleRate = this.AudioContext.sampleRate;
+    const frameCount = sampleRate;
+    const arrayBuffer = this.AudioContext.createBuffer(channels, frameCount, sampleRate);
+    const bufferData = arrayBuffer.getChannelData(0);
+    for (let i = 0; i < frameCount; i++) {
+        if ((i / sampleRate > 0 && i / sampleRate < 0.3) || (i / sampleRate > 0.5 && i / sampleRate < 0.8)) {
+            bufferData[i] = 0.25;
+        }
+    }
+    this.ringerLFOBuffer = arrayBuffer;
+  }
+
   startRinging() {
     if (this.status === 0) {
         this.setup();
@@ -121,5 +135,34 @@ export class ToneService {
       }
       this.stop();
       this.status = 0;
+  }
+
+  startBusyTone() {
+    if (this.status === 0) {
+        this.setup();
+        this.genericStart();
+        this.createBusyTone();
+        this.status = 1;
+        this.gainNode.gain.value = 0;
+        this.ringerLFOSource = this.AudioContext.createBufferSource();
+        this.ringerLFOSource.buffer = this.ringerLFOBuffer;
+        this.ringerLFOSource.loop = true;
+        this.ringerLFOSource.start(0);
+        this.ringerLFOSource.connect(this.gainNode.gain);
+        this.status = 1;
+    }
+  }
+
+  stopBusyTone() {
+      if ( typeof this.ringerLFOSource !== 'undefined' ) {
+        this.ringerLFOSource.stop();
+      }
+      this.stop();
+      this.status = 0;
+  }
+
+  stopAll() {
+    this.stopBusyTone();
+    this.stopRinging();
   }
 }
