@@ -211,8 +211,19 @@ export class JsSipService {
 
         session.on('failed', (data) => {
             this.toneService.stopRinging();
-            audioPlayer.play('rejected');
-            this.setState({ session: null });
+            let message: HTMLAudioElement;
+            switch (data.cause) {
+                default:
+                    message = audioPlayer.play('rejected');
+            }
+
+            // To keep the screen active while the error message is playing
+            const onAudioEnded = (event) => {
+                this.setState({ session: null });
+                event.target.currentTime = 0;
+                event.target.removeEventListener('ended', onAudioEnded, false);
+            };
+            message.addEventListener('ended', onAudioEnded);
         });
 
         session.on('ended', () => {

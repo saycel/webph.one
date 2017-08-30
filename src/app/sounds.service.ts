@@ -3,7 +3,7 @@ import FILES from './sounds';
 const SOUNDS = [
      {name: 'answered', audio: new Audio(FILES['answered']), volume: 1.0 },
      {name: 'rejected', audio: new Audio(FILES['rejected']), volume: 0.5 },
-     {name: 'hangup', audio: new Audio(FILES['hangup']),  volume: 1.0 },
+     {name: 'hangup', audio: new Audio(FILES['hangup']),  volume: 1.0 }
 
 ];
 
@@ -31,7 +31,7 @@ export default {
      * @param {String} name - Sound name
      * @param {[Float]} relativeVolume - Relative volume (0.0 - 1.0)
      */
-    play(name, loop = false) {
+    play(name, loop = false): HTMLAudioElement {
         this.initialize();
 
         const sound = SOUNDS.filter(function(x){ return x.name === name; })[0];
@@ -46,6 +46,7 @@ export default {
             sound.audio.volume = (sound.volume || 1.0);
             sound.audio.loop = loop;
             sound.audio.play();
+            return sound.audio;
         } catch (error) {
         }
     },
