@@ -297,7 +297,9 @@ export class JsSipService {
     }
 
     handleHangup() {
+        //If is any tone o sound playing
+        this.toneService.stopAll();
+        audioPlayer.stopAll();
         this.state.session.terminate();
-        this.setState({session: null});
     }
 }

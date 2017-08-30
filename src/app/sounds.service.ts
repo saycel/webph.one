@@ -61,5 +61,12 @@ export default {
 
         sound.audio.pause();
         sound.audio.currentTime = 0.0;
+    },
+
+    stopAll() {
+        SOUNDS.forEach(sound => {
+            sound.audio.pause();
+            sound.audio.currentTime = 0.0;
+        });
     }
 };

@@ -160,4 +160,9 @@ export class ToneService {
       this.stop();
       this.status = 0;
   }
+
+  stopAll() {
+    this.stopBusyTone();
+    this.stopRinging();
+  }
 }
