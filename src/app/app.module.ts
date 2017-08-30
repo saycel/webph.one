@@ -11,7 +11,6 @@ import { AppComponent } from './app.component';
 
 import { CallModule } from './call/call.module';
 import { DirectoryModule } from './directory/directory.module';
-import { ShareModule } from './share/share.module';
 
 import { ToneService } from './tone.service';
 import { JsSipService } from './jssip.service';
@@ -30,10 +29,6 @@ export const appRoutes: Routes  = [
   {
     path:'directory',
     loadChildren: './directory/directory.module#DirectoryModule'
-  },
-  {
-    path:'share',
-    loadChildren: './share/share.module#ShareModule'
   },
   { 
     path: '**',
@@ -59,7 +54,6 @@ export const appRoutes: Routes  = [
     BrowserModule,
     HttpModule,
     CallModule,
-    ShareModule,
     DirectoryModule
   ],
   providers: [ToneService, JsSipService, DirectoryService],

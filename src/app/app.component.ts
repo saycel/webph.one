@@ -20,10 +20,6 @@ export class AppComponent {
   {
     label: 'Directory',
     link: '/directory'
-  },
-  {
-    label: 'Share',
-    link: '/share'
   }];
 
   constructor(iconRegistry: MdIconRegistry, sanitizer: DomSanitizer, directoryService: DirectoryService ) {
