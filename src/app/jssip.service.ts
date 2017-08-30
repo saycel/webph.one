@@ -213,6 +213,9 @@ export class JsSipService {
             this.toneService.stopRinging();
             let message: HTMLAudioElement;
             switch (data.cause) {
+                case JsSIP.C.causes.NOT_FOUND:
+                    message = audioPlayer.play('error_404');
+                    break;
                 default:
                     message = audioPlayer.play('rejected');
             }
