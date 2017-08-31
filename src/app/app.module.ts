@@ -16,6 +16,7 @@ import { ShareModule } from './share/share.module';
 import { ToneService } from './tone.service';
 import { JsSipService } from './jssip.service';
 import { DirectoryService } from './directory.service';
+import { StorageService } from './storage.service';
 
 export const appRoutes: Routes  = [
   {
@@ -62,7 +63,7 @@ export const appRoutes: Routes  = [
     ShareModule,
     DirectoryModule
   ],
-  providers: [ToneService, JsSipService, DirectoryService],
+  providers: [ToneService, JsSipService, DirectoryService, StorageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
