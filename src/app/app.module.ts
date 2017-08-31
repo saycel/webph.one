@@ -15,6 +15,7 @@ import { DirectoryModule } from './directory/directory.module';
 import { ToneService } from './tone.service';
 import { JsSipService } from './jssip.service';
 import { DirectoryService } from './directory.service';
+import { StorageService } from './storage.service';
 
 export const appRoutes: Routes  = [
   {
@@ -56,7 +57,7 @@ export const appRoutes: Routes  = [
     CallModule,
     DirectoryModule
   ],
-  providers: [ToneService, JsSipService, DirectoryService],
+  providers: [ToneService, JsSipService, DirectoryService, StorageService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

@@ -3,9 +3,11 @@ import { Component } from '@angular/core';
 import { ToneService } from './tone.service';
 import { JsSipService } from './jssip.service';
 import { DirectoryService } from './directory.service';
+import { StorageService } from './storage.service';
 
 import {DomSanitizer} from '@angular/platform-browser';
 import {MdIconRegistry} from '@angular/material';
+
 
 @Component({
   selector: 'app-root',
