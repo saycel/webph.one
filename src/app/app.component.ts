@@ -28,5 +28,6 @@ export class AppComponent {
         directoryService.get().subscribe();
         iconRegistry.addSvgIcon('call-end', sanitizer.bypassSecurityTrustResourceUrl('assets/call-end.svg'));
         iconRegistry.addSvgIcon('call', sanitizer.bypassSecurityTrustResourceUrl('assets/call.svg'));
+        iconRegistry.addSvgIcon('contact-add', sanitizer.bypassSecurityTrustResourceUrl('assets/contact-add.svg'));
   }
 }
