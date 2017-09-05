@@ -1,5 +1,9 @@
-<md-nav-list *ngFor="let directory of directories | async">
-  <h3 md-subheader>{{directory.title}}</h3>  
+<md-nav-list *ngFor="let directory of directories | async" [@toggleState]="directoryToggle" class="contacts-list">
+  <h3 md-subheader (click)="toggleDirectoryList(directoryToggle)">
+    {{directory.title}} 
+        <md-icon svgIcon="arrow-down" class="arrow" [@arrowState]="directoryToggle"></md-icon>
+
+  </h3>  
   <a md-list-item *ngFor="let item of directory.items" (click)="call(item)" class="list">
      <h3 md-line>{{ item.title }}</h3>
      <h3 md-line>{{ item.subtitle }}</h3>
@@ -7,8 +11,11 @@
   </a>
 </md-nav-list>
 
-<md-nav-list>
-  <h3 md-subheader>Contact list</h3>  
+<md-nav-list [@toggleState]="contactsToggle" class="contacts-list">
+  <h3 md-subheader (click)="toggleContactsList(contactsToggle)">
+    Contact list
+    <md-icon svgIcon="arrow-down" class="arrow" [@arrowState]="contactsToggle"></md-icon>
+  </h3>  
   <a md-list-item *ngFor="let item of contacts | async" (click)="call(item)" class="list">
      <h3 md-line>{{ item.title }}</h3>
      <h3 md-line>{{ item.subtitle }}</h3>
