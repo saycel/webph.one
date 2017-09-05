@@ -7,7 +7,13 @@ const routes: Routes = [{
     path: 'directory',
     component: DirectoryComponent,
     pathMatch: 'full'
-}];
+  },
+  {
+    path: 'directory/:action/:number',
+      component: DirectoryComponent,
+      pathMatch: 'full'
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
