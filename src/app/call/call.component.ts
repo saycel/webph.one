@@ -1,26 +1,54 @@
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnInit, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
+import { Subject } from 'rxjs/Subject';
+import 'rxjs/add/operator/takeUntil';
 
 import { ToneService } from '../tone.service';
 import { JsSipService } from '../jssip.service';
+import { StorageService } from '../storage.service';
+import { DirectoryItemI } from '../directory.service';
 
 @Component({
   selector: 'app-call',
   templateUrl: './call.component.html',
   styleUrls: ['./call.component.scss']
 })
-export class CallComponent implements OnInit {
+export class CallComponent implements OnInit, OnDestroy {
   number = '';
+  contacts: DirectoryItemI[] = [];
+  private ngUnsubscribe: Subject<void> = new Subject<void>(); // = new Subject(); in Typescript 2.2-2.4
 
   constructor(
     private toneService: ToneService,
     public jsSip: JsSipService,
     private route: ActivatedRoute,
-    private router: Router
-  ) { }
+    private router: Router,
+    public storageService: StorageService
+  ) {
+    storageService.table('contacts')
+      .read()
+      .takeUntil(this.ngUnsubscribe)
+      .subscribe(contacts => {
+        this.contacts = contacts;
+      });
+   }
 
   ngOnInit() {
     this.number = this.route.snapshot.paramMap.get('number') || '';
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
+  }
+
+
+  existContact(number) {
+    return this.contacts.filter(contact => contact.number === Number(number)).length > 0;
+  }
+
+  addContact(number: string) {
+    this.router.navigate(['/directory', 'add', number]);
   }
 
   @HostListener('document:keypress', ['$event'])
