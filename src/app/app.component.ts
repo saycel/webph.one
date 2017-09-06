@@ -34,5 +34,6 @@ export class AppComponent {
         iconRegistry.addSvgIcon('call', sanitizer.bypassSecurityTrustResourceUrl('assets/call.svg'));
         iconRegistry.addSvgIcon('contact-add', sanitizer.bypassSecurityTrustResourceUrl('assets/contact-add.svg'));
         iconRegistry.addSvgIcon('arrow-down', sanitizer.bypassSecurityTrustResourceUrl('assets/arrow-down.svg'));
+        iconRegistry.addSvgIcon('person', sanitizer.bypassSecurityTrustResourceUrl('assets/person.svg'));
   }
 }
