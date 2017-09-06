@@ -22,13 +22,17 @@
         text-align: right;
         overflow: hidden;
         right: 0px;
-        direction: rtl;
     }
     .clean {
         width: 25px;
         padding: 20px 0 20px 5px;
     }
-
+    .save {
+      background: green;
+      min-width: 50px;
+      color: #fff;
+      line-height: 29px;
+    }
 }
 
 .dial {

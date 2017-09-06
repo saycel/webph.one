@@ -1,7 +1,12 @@
 <div class="pad">
   <div class="number">
+    <div calss="save-contact">
+      <button md-button class="save" *ngIf="existContact(number) === false" (click)="addContact(number)">
+        <md-icon svgIcon="contact-add"></md-icon>
+      </button>
+    </div>
     <div class="input">
-      {{number}}
+      {{number | phoneNumber}}
     </div>
     <img class="clean" (click)="clean()" src="assets/clean.png"/>
   </div>

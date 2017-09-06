@@ -6,7 +6,8 @@ import {
   MdGridListModule,
   MdIconModule,
   MdListModule,
-  MdDialogModule
+  MdDialogModule,
+  MdInputModule
 } from '@angular/material';
 
 @NgModule({
@@ -17,7 +18,8 @@ import {
     MdGridListModule,
     MdIconModule,
     MdListModule,
-    MdDialogModule
+    MdDialogModule,
+    MdInputModule
   ],
   exports: [
     MdTabsModule,
@@ -26,7 +28,8 @@ import {
     MdGridListModule,
     MdIconModule,
     MdListModule,
-    MdDialogModule
+    MdDialogModule,
+    MdInputModule
   ],
 })
 export class CustomMaterialModule { }
