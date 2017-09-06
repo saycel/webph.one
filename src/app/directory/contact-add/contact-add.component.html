@@ -1,0 +1,16 @@
+<h3 (click)="goBack()"><md-icon svgIcon="arrow-down"></md-icon> Add new contact</h3>
+<form [formGroup]="form" (ngSubmit)="addContact()">
+
+  <md-input-container class="full-width">
+    <md-icon mdPrefix svgIcon="call"></md-icon>
+    <input type="tel" mdInput placeholder="Telephone" formControlName="number">
+  </md-input-container>
+  
+
+  <md-input-container class="full-width custom-input">
+    <md-icon mdPrefix svgIcon="person"></md-icon>
+    <input type="text" mdInput placeholder="Name" formControlName="title">
+  </md-input-container>
+
+  <button md-button type="submit" class="full-width btn-save">Save</button>
+</form>

@@ -1,7 +1,8 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
-import { DirectoryComponent } from './directory.component'
+import { DirectoryComponent } from './directory.component';
+import { ContactAddComponent } from './contact-add/contact-add.component';
 
 const routes: Routes = [{
     path: 'directory',
@@ -10,7 +11,7 @@ const routes: Routes = [{
   },
   {
     path: 'directory/:action/:number',
-      component: DirectoryComponent,
+      component: ContactAddComponent,
       pathMatch: 'full'
   }
 ];
