@@ -1,6 +1,5 @@
-<md-nav-list *ngFor="let directory of directories | async">
-  <h3 md-subheader>{{directory.title}}</h3>  
-  <a md-list-item *ngFor="let item of directory.items" (click)="call(item)" class="list">
+<md-nav-list class="contacts-list">
+  <a md-list-item *ngFor="let item of contacts | async" (click)="call(item)" class="list">
      <h3 md-line>{{ item.title }}</h3>
      <h3 md-line>{{ item.subtitle }}</h3>
      <md-icon svgIcon="call"></md-icon>&nbsp;{{item.number}}

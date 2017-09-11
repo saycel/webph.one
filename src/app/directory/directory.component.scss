@@ -6,3 +6,19 @@ h3.mat-subheader {
 .list {
     flex: row-reverse !important;
 }
+
+.contacts-list {
+    overflow: hidden;
+    margin-top: 7px;
+}
+.contacts-list > h3 {
+    cursor: pointer;
+    color: #000;
+    background: #ccc;
+    margin-top: -15px;
+}
+
+.contacts-list > h3 > .arrow {
+    float: right;
+    transform: 'rotate(0)'
+}

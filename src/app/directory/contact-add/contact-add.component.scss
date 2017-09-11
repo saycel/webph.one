@@ -1,0 +1,32 @@
+.full-width {
+  width: 100%;
+}
+
+h3 {
+    cursor: pointer;
+    color: #000;
+    background: #dedede;
+    margin-top: 0px;
+    padding: 10px;
+}
+h3 > md-icon {
+    transform: rotate(90deg);
+    float:left;
+    margin-right: 10px;
+}
+
+md-icon {
+    margin-right: 10px; 
+}
+
+.btn-save {
+    background: green;
+    color: #fff;
+    position: absolute;
+    bottom: 30px;
+    width: calc(100% - 40px);
+}
+
+form {
+    padding: 0 20px;
+}

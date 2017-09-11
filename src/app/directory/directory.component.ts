@@ -1,7 +1,8 @@
 import { Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
-import { DirectoryService, DirectoryI, DirectoryItemI } from '../directory.service';
+import { DirectoryI, DirectoryItemI } from '../directory.service';
+import { StorageService } from '../storage.service';
 
 @Component({
   selector: 'app-directory',
@@ -10,14 +11,25 @@ import { DirectoryService, DirectoryI, DirectoryItemI } from '../directory.servi
 })
 
 export class DirectoryComponent {
-
-  public directories: Observable<DirectoryI[]>;
-
-  constructor(private _router: Router, directoryService: DirectoryService ) {
-    this.directories = directoryService.get();
+  public contacts: Observable<DirectoryItemI[]>;
+  constructor(private _router: Router, public storageService: StorageService ) {
+    this.contacts = storageService.table('contacts').read().asObservable();
   }
 
   call(item: DirectoryItemI) {
     this._router.navigate(['/call', item.number]);
   }
+
+  add(contact: DirectoryItemI) {
+    this.storageService.table('contacts').create(contact);
+  }
+
+  update(contact: DirectoryItemI) {
+    this.storageService.table('contacts').update(contact);
+  }
+
+  delete(contact: DirectoryItemI) {
+    this.storageService.table('contacts').delete(contact);
+  }
+
 }
