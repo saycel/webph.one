@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { CustomMaterialModule } from '../material.module';
+import { CustomsPipesModule } from '../customs-pipes/customs-pipes.module';
 
 import { DirectoryRoutingModule } from './directory-routing.module';
 import { DirectoryComponent } from './directory.component';
@@ -14,7 +15,8 @@ import { ContactAddComponent } from './contact-add/contact-add.component';
     DirectoryRoutingModule,
     CustomMaterialModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    CustomsPipesModule
   ],
   declarations: [DirectoryComponent, ContactAddComponent]
 })
