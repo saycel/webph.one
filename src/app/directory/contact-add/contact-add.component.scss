@@ -5,7 +5,7 @@
 h3 {
     cursor: pointer;
     color: #000;
-    background: #ffee5a;
+    background: #dedede;
     margin-top: 0px;
     padding: 10px;
 }
@@ -29,16 +29,4 @@ md-icon {
 
 form {
     padding: 0 20px;
-}
-
-form /deep/ .mat-focused .mat-input-placeholder {
-    color: rgb(17,85,206);
-}
-
-form /deep/ .mat-focused md-icon {
-    color: rgb(17,85,206);
-}
-
-form /deep/ .mat-focused .mat-input-ripple {
-    background-color:rgba(17,85,206,0.2);
 }

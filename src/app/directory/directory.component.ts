@@ -1,35 +1,18 @@
-import { Component, trigger, state, animate, transition, style } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Router } from '@angular/router';
-import { DirectoryService, DirectoryI, DirectoryItemI } from '../directory.service';
+import { DirectoryI, DirectoryItemI } from '../directory.service';
 import { StorageService } from '../storage.service';
 
 @Component({
   selector: 'app-directory',
   templateUrl: './directory.component.html',
-  styleUrls: ['./directory.component.scss'],
-  animations: [
-    trigger('toggleState', [
-      state('true' , style({ maxHeight: '100%' })),
-      state('false', style({ maxHeight: '33px' })),
-      transition('* => *', animate('400ms'))
-    ]),
-    trigger('arrowState', [
-      state('true' , style({ transform: 'rotate(0)'})),
-      state('false', style({ transform: 'rotate(-90deg)'})),
-      transition('* => *', animate('150ms'))
-    ])
-  ]
+  styleUrls: ['./directory.component.scss']
 })
 
 export class DirectoryComponent {
-
-  public directories: Observable<DirectoryI[]>;
   public contacts: Observable<DirectoryItemI[]>;
-  public contactsToggle = true;
-  public directoryToggle = true;
-  constructor(private _router: Router, directoryService: DirectoryService, public storageService: StorageService ) {
-    this.directories = directoryService.get();
+  constructor(private _router: Router, public storageService: StorageService ) {
     this.contacts = storageService.table('contacts').read().asObservable();
   }
 
@@ -49,11 +32,4 @@ export class DirectoryComponent {
     this.storageService.table('contacts').delete(contact);
   }
 
-  toggleContactsList(value: boolean) {
-    this.contactsToggle = !this.contactsToggle;
-  }
-
-  toggleDirectoryList(value: boolean) {
-    this.directoryToggle = !this.directoryToggle;
-  }
 }
