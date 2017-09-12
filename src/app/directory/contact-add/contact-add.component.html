@@ -1,9 +1,13 @@
-<h3 (click)="goBack()"><md-icon svgIcon="arrow-down"></md-icon> Add new contact</h3>
-<form [formGroup]="form" (ngSubmit)="addContact()">
+<h3 (click)="goBack()"><md-icon svgIcon="arrow-down"></md-icon> 
+  <span *ngIf="action === 'add'">Add new contact</span>
+  <span *ngIf="action === 'edit'">Edit contact</span>
+</h3>
+
+<form [formGroup]="form" (ngSubmit)="submit()">
 
   <md-input-container class="full-width">
     <md-icon mdPrefix svgIcon="call"></md-icon>
-    <input type="tel" mdInput placeholder="Telephone" formControlName="number">
+    <input type="string" mdInput placeholder="Telephone" formControlName="number" appInputPhonenumber>
   </md-input-container>
   
 
@@ -12,5 +16,13 @@
     <input type="text" mdInput placeholder="Name" formControlName="title">
   </md-input-container>
 
-  <button md-button type="submit" class="full-width btn-save">Save</button>
+  <div class="bottom" *ngIf="action === 'add'">
+    <button md-button type="submit" class="full-width btn-save">Save</button>
+  </div>
+  
+  <div class="bottom" *ngIf="action === 'edit'">
+    <button md-button type="submit" class="half-width btn-save" [disabled]="!form.valid">Edit</button>
+    <button md-button type="submit" (click)="deleteContact($event)" class="half-width btn-delete">Delete</button>
+  </div>
+
 </form>
