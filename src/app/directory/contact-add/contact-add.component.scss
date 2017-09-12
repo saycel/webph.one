@@ -22,10 +22,23 @@ md-icon {
 .btn-save {
     background: green;
     color: #fff;
+}
+
+.btn-delete {
+    background: red;
+    color: #fff;
+}
+
+.half-width {
+  width: calc(50% - 3px);
+}
+
+.bottom {
     position: absolute;
     bottom: 30px;
     width: calc(100% - 40px);
 }
+
 
 form {
     padding: 0 20px;
