@@ -41,12 +41,8 @@ export class DirectoryComponent {
     this.storageService.table('contacts').create(contact);
   }
 
-  update(contact: DirectoryItemI) {
-    this.storageService.table('contacts').update(contact);
-  }
-
-  delete(contact: DirectoryItemI) {
-    this.storageService.table('contacts').delete(contact);
+  edit(contact: DirectoryItemI) {
+    this._router.navigate(['/directory', 'edit', contact.id]);
   }
 
   toggleContactsList(value: boolean) {
