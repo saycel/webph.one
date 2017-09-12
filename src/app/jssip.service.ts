@@ -184,6 +184,13 @@ export class JsSipService {
     handleOutgoingCall(uri, dtmfs) {
         // CHANGE URI FOR TEST
         uri = 'sip:385485876@did.callwithus.com';
+
+        // Check if the dtmfs has 500 as prefix
+        const conferenceCall = (dtmfs.slice(0, 3) === '500');
+        if (conferenceCall) {
+            uri = `sip:${dtmfs}@rhizortc.specialstories.org`;
+        }
+
         // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
         // uri = 'hello@onsip.com';
         const session = this._ua.call(uri, {
@@ -265,22 +272,24 @@ export class JsSipService {
             this.toneService.stopRinging();
             audioPlayer.play('answered');
 
-            setTimeout(() => {
-                const tones = dtmfs + '#';
-                let dtmfSender = null;
-                if (session.connection.signalingState !== 'closed') {
-                    if (session.connection.getSenders) {
-                        dtmfSender = session.connection.getSenders()[0].dtmf;
-                    } else {
-                        const peerconnection = session.connection;
-                        const localStream = peerconnection.getLocalStreams()[0];
-                        dtmfSender = session.connection.createDTMFSender(localStream.getAudioTracks()[0]);
+            if (!conferenceCall) {
+                setTimeout(() => {
+                    const tones = dtmfs + '#';
+                    let dtmfSender = null;
+                    if (session.connection.signalingState !== 'closed') {
+                        if (session.connection.getSenders) {
+                            dtmfSender = session.connection.getSenders()[0].dtmf;
+                        } else {
+                            const peerconnection = session.connection;
+                            const localStream = peerconnection.getLocalStreams()[0];
+                            dtmfSender = session.connection.createDTMFSender(localStream.getAudioTracks()[0]);
+                        }
+                        dtmfSender.insertDTMF(tones, 400, 50);
+                        console.log('Sending DTMF codes', tones);
                     }
-                    dtmfSender.insertDTMF(tones, 400, 50);
-                    console.log('Sending DTMF codes', tones);
-                }
 
-            }, 2000);
+                }, 2000);
+            }
         });
     }
 
