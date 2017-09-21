@@ -38,6 +38,7 @@ export class JsSipService {
             AppSecret : null
         }
     };
+    public socket: any;
 
     constructor(toneService: ToneService) {
         this.toneService = new ToneService;
@@ -46,20 +47,26 @@ export class JsSipService {
             session         : null,
             incomingSession : null
         };
-
-        this._ua = null;
-        const socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
+        this.socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
         if (this.settings.socket.via_transport !== 'auto') {
-            socket.via_transport = this.settings.socket.via_transport;
+            this.socket.via_transport = this.settings.socket.via_transport;
         }
+    }
+
+    connect(credentials) {
+        if (!credentials) {
+            return;
+        }
+        this._ua = null;
 
         try {
+            credentials.uri = (credentials.user) ? credentials.user + '@rhizortc.specialstories.org' : null;
             JsSIP.debug.enable('JsSIP:*');
             this._ua = new JsSIP.UA({
-                uri                 : this.settings.uri,
-                password            : this.settings.password,
-                display_name        : this.settings.display_name,
-                sockets             : [ socket ],
+                uri                 : credentials.uri || this.settings.uri,
+                password            : credentials.password || this.settings.password,
+                display_name        : credentials.user || this.settings.display_name,
+                sockets             : [ this.socket ],
                 registrar_server    : this.settings.registrar_server,
                 contact_uri         : this.settings.contact_uri,
                 authorization_user  : this.settings.authorization_user,
@@ -75,6 +82,14 @@ export class JsSipService {
             return;
         }
 
+        // Add events to ua
+        this.addEvents();
+
+        // Start ua
+        this._ua.start();
+    }
+
+    addEvents() {
         this._ua.on('connecting', () => {
             this.setState(
                 {
@@ -121,6 +136,7 @@ export class JsSipService {
         });
 
         this._ua.on('newRTCSession', (data) => {
+            console.log('Hola', data);
             if (data.originator === 'local') {
                 return;
             }
@@ -138,10 +154,10 @@ export class JsSipService {
                 return;
             }
 
-            audioPlayer.play('ringing');
-            this.setState({ incomingSession: session });
+            audioPlayer.play('ringing', true);
+            this.setState({ incomingSession: data });
 
-            session.on('failed', () => {
+            session.on('failed', (err) => {
                 audioPlayer.stop('ringing');
                 this.setState({
                     session         : null,
@@ -163,17 +179,16 @@ export class JsSipService {
                     incomingSession : null
                 });
             });
+
+            session.on('addstream', (e) => {
+                this.audioElement.srcObject = e.stream;
+                this.audioElement.play();
+            });
+
+            session.on('onremovestream', (e) => {
+                    this.audioElement.pause();
+            });
         });
-
-        this._ua.start();
-
-        if (this.settings.callstats.enabled) {
-            /*callstatsjssip(
-                this._ua,
-                this.settings.callstats.AppID,
-                this.settings.callstats.AppSecret
-            );*/
-        }
     }
 
     setState(newState) {
@@ -294,14 +309,17 @@ export class JsSipService {
     }
 
     handleAnswerIncoming() {
-        const session = this.state.incomingSession;
+        const session = this.state.incomingSession.session;
         session.answer({
-            pcConfig : this.settings.pcConfig || { iceServers: [] }
+            mediaConstraints: {
+                audio: true, // only audio calls
+                video: false
+            }
         });
     }
 
     handleRejectIncoming() {
-        const session = this.state.incomingSession;
+        const session = this.state.incomingSession.session;
         session.terminate();
     }
 
