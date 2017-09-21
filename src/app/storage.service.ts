@@ -7,11 +7,24 @@ interface ObjectWithId {
   id?: String;
 }
 
+interface AuthKeysI {
+  auth: string;
+  p256dh: string;
+}
+
+export interface PushDataI {
+  endpoint: string;
+  expirationTime?: string;
+  keys: AuthKeysI;
+  p256dh: string;
+}
+
 export interface UserI {
   email?: string;
   user?: string;
   password?: string;
   id?: string;
+  push?: PushDataI;
 }
 
 interface DbTable {

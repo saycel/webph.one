@@ -2,6 +2,8 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { HttpModule } from '@angular/http';
 import { Routes, RouterModule, PreloadAllModules } from '@angular/router';
+import { NgServiceWorker } from '@angular/service-worker';
+
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -64,7 +66,7 @@ export const appRoutes: Routes  = [
     ShareModule,
     DirectoryModule
   ],
-  providers: [ToneService, JsSipService, DirectoryService, StorageService, UserService],
+  providers: [ToneService, JsSipService, DirectoryService, StorageService, UserService, NgServiceWorker],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
