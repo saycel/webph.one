@@ -1,8 +1,10 @@
 import { Component, trigger, state, animate, transition, style } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { Router } from '@angular/router';
 import { DirectoryService, DirectoryI, DirectoryItemI } from '../directory.service';
-import { StorageService } from '../storage.service';
+import { StorageService, UserI } from '../storage.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-directory',
@@ -19,7 +21,8 @@ import { StorageService } from '../storage.service';
       state('false', style({ transform: 'rotate(-90deg)'})),
       transition('* => *', animate('150ms'))
     ])
-  ]
+  ],
+  providers: [UserService]
 })
 
 export class DirectoryComponent {
@@ -28,7 +31,20 @@ export class DirectoryComponent {
   public contacts: Observable<DirectoryItemI[]>;
   public contactsToggle = true;
   public directoryToggle = true;
-  constructor(private _router: Router, directoryService: DirectoryService, public storageService: StorageService ) {
+  public user: UserI;
+
+  constructor(
+    private _router: Router,
+    public directoryService: DirectoryService,
+    public storageService: StorageService,
+    public userService: UserService
+  ) {
+    userService.userData().subscribe(
+      x => {
+        console.log(x);
+        this.user = x;
+      }
+    );
     this.directories = directoryService.get();
     this.contacts = storageService.table('contacts').read().asObservable();
   }

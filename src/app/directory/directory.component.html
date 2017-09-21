@@ -1,3 +1,8 @@
+
+<h3 *ngIf="user && user.id" class="my-number">
+  My number <span>{{ user.user | phoneNumber }}</span>
+</h3>
+
 <md-nav-list *ngFor="let directory of directories | async" [@toggleState]="directoryToggle" class="contacts-list">
   <h3 md-subheader (click)="toggleDirectoryList(directoryToggle)">
     {{directory.title}} 
