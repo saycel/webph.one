@@ -4,7 +4,14 @@ import { DirectoryItemI } from './directory.service';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 interface ObjectWithId {
-  id: String;
+  id?: String;
+}
+
+export interface UserI {
+  email?: string;
+  user?: string;
+  password?: string;
+  id?: string;
 }
 
 interface DbTable {
@@ -31,12 +38,22 @@ export class StorageService {
     subject: new BehaviorSubject<DirectoryItemI[]>([]),
     methods: {
       create: (item: Object) => this.create('contacts', item),
-      read: () => this.read('contacts'),
+      read:   () => this.read('contacts'),
       update: (item: ObjectWithId) => this.updateById('contacts', item),
       delete: (item: ObjectWithId) => this.deleteById('contacts', item)
     }
-   }
-  ];
+  },
+  {
+    name: 'user',
+    init: [{user: 'no_user'}],
+    subject: new BehaviorSubject<UserI[]>([]),
+    methods: {
+      create: (item: UserI) => this.create('user', item),
+      read:   (): BehaviorSubject<UserI[]> => this.read('user'),
+      update: (item: UserI) => this.updateById('user', item),
+      delete: (item: UserI) => this.deleteById('user', item)
+    }
+  }];
 
   constructor() {
     LocalForage.config({
@@ -47,9 +64,10 @@ export class StorageService {
   }
 
   private initStorages(list) {
-    list.forEach(table => {
+    list.map(table => {
       LocalForage.getItem(table.name)
         .then((items) => {
+          console.log('Init table', table, items);
           if (items === null) {
             LocalForage.setItem(table.name, table.init)
             .then(() => table.subject.next(table.init))
@@ -65,18 +83,18 @@ export class StorageService {
   }
 
   table(tableName: string ) {
-    const result = this.dbTables.filter(x => x.name = tableName);
+    const result = this.dbTables.filter(x => x.name === tableName);
     if (result.length > 0) {
       return result[0].methods;
     } else {
-      throw Error('Db table not found');
+      throw Error('Db table ' + tableName + 'not found');
     }
   }
 
   // Create
   private create(tableName: string, item: Object) {
     item = Object.assign({}, item, {id: randomId()});
-    const result = this.dbTables.filter(x => x.name = tableName);
+    const result = this.dbTables.filter(x => x.name === tableName);
     if (result.length > 0) {
       const table = result[0];
       LocalForage.getItem(table.name)
@@ -86,13 +104,13 @@ export class StorageService {
             .catch((err) => { throw Error('Error adding object in ' + tableName); }))
         .catch((err) => { throw Error('Error reading ' + tableName); });
     } else {
-      throw Error('Db table not found');
+      throw Error('Db table ' + tableName + ' not found');
     }
   }
 
   // Update
   private updateById(tableName: string, item: ObjectWithId) {
-    const result = this.dbTables.filter(x => x.name = tableName);
+    const result = this.dbTables.filter(x => x.name === tableName);
     if (result.length > 0) {
       const table = result[0];
       LocalForage.getItem(table.name)
@@ -111,7 +129,7 @@ export class StorageService {
   // Read
   private read(tableName: string) {
     const result = this.dbTables
-      .filter(x => x.name = tableName)
+      .filter(x => x.name === tableName)
       .map(x => x.subject);
     if (result.length > 0) {
       return result[0];

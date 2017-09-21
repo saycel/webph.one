@@ -17,26 +17,27 @@ import { ToneService } from './tone.service';
 import { JsSipService } from './jssip.service';
 import { DirectoryService } from './directory.service';
 import { StorageService } from './storage.service';
+import { UserService } from './user.service';
 
 export const appRoutes: Routes  = [
   {
-    path:'',
-    pathMatch:'full',
-    redirectTo:'call'
+    path: '',
+    pathMatch: 'full',
+    redirectTo: 'call'
   },
   {
-    path:'call',
+    path: 'call',
     loadChildren: './call/call.module#CallModule'
   },
   {
-    path:'directory',
+    path: 'directory',
     loadChildren: './directory/directory.module#DirectoryModule'
   },
   {
-    path:'share',
+    path: 'share',
     loadChildren: './share/share.module#ShareModule'
   },
-  { 
+  {
     path: '**',
     redirectTo: '/call',
     pathMatch: 'full'
@@ -63,7 +64,7 @@ export const appRoutes: Routes  = [
     ShareModule,
     DirectoryModule
   ],
-  providers: [ToneService, JsSipService, DirectoryService, StorageService],
+  providers: [ToneService, JsSipService, DirectoryService, StorageService, UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
