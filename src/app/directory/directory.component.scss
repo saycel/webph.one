@@ -8,7 +8,16 @@ h3.mat-subheader {
     flex: row-reverse !important;
     color: #1155CD;
 }
-
+.my-number {
+    font-size: 1em;
+    font-weight: normal;
+    margin: 15px;
+    color: #1155CD;
+    span {
+        float: right;
+        font-weight: bold;
+    }
+}
 .contacts-list {
     overflow: hidden;
     margin-top: 7px;

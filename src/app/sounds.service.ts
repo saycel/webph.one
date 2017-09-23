@@ -4,6 +4,7 @@ const SOUNDS = [
      {name: 'answered', audio: new Audio(FILES['answered']), volume: 1.0 },
      {name: 'rejected', audio: new Audio(FILES['rejected']), volume: 0.5 },
      {name: 'hangup', audio: new Audio(FILES['hangup']),  volume: 1.0 },
+     {name: 'ringing', audio: new Audio(FILES['hangup']),  volume: 1.0 },
      {name: 'error_404', audio: new Audio(FILES['error_404']),  volume: 1.0 },
      {name: 'error_general', audio: new Audio(FILES['error_general']),  volume: 1.0 }
 ];
