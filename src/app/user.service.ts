@@ -18,7 +18,7 @@ interface KamailioUserI {
 export class UserService {
   private _user = new BehaviorSubject<UserI>({});
   private _kamailioUrl = 'https://saycel.specialstories.org/cgi-bin/allocatenumber.py';
-  private _pushNotificationServer = 'https://saycel.specialstories.org/push/';
+  private _pushNotificationServer = 'https://webphone.rhizomatica.org/webpush/';
   private _genericEmail = '@generic_email.saycel';
 
   private _prefix = '999100';
