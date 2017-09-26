@@ -40,17 +40,14 @@ export class AppComponent {
     // Obtain the user in localStorage, if none is found, make a register and save it.
     userService.isReady().subscribe(
       (status: boolean) => {
-        console.log(status);
-        console.log(userService.isUser());
         if (status === true && userService.isUser() === false) {
           userService.createUser();
+        } else if (status === true && userService.isUser() === true) {
+          jsSip.connect(userService.userData().getValue());
         }
       }
     );
 
-    // Init jsSip and listen user credentials changes.
-    userService.userData()
-      .subscribe((credentials) => jsSip.connect(credentials) );
 
     iconRegistry.addSvgIcon('call-end', sanitizer.bypassSecurityTrustResourceUrl('assets/call-end.svg'));
     iconRegistry.addSvgIcon('call', sanitizer.bypassSecurityTrustResourceUrl('assets/call.svg'));
