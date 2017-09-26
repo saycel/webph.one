@@ -11,6 +11,8 @@ export class JsSipService {
     private audioElement: HTMLAudioElement;
     private toneService: ToneService;
     private _ua: any;
+    private init = false;
+
     public settings = {
         display_name        : 'webrtc',
         uri                 : 'webrtc@rhizortc.specialstories.org',
@@ -48,16 +50,18 @@ export class JsSipService {
             incomingSession : null
         };
         this.socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
+        this.audioElement = document.body.appendChild(document.createElement('audio'));
         if (this.settings.socket.via_transport !== 'auto') {
             this.socket.via_transport = this.settings.socket.via_transport;
         }
     }
 
     connect(credentials) {
-        if (!credentials) {
+        if (!credentials && this.init === true ) {
             return;
         }
         this._ua = null;
+        this.init = true;
 
         try {
             credentials.uri = (credentials.user) ? credentials.user + '@rhizortc.specialstories.org' : null;
@@ -74,8 +78,6 @@ export class JsSipService {
                 session_timers      : this.settings.session_timers,
                 use_preloaded_route : this.settings.use_preloaded_route
             });
-
-            this.audioElement = document.body.appendChild(document.createElement('audio'));
 
         } catch (error) {
             console.log('JsSIP config error', error);
@@ -136,7 +138,6 @@ export class JsSipService {
         });
 
         this._ua.on('newRTCSession', (data) => {
-            console.log('Hola', data);
             if (data.originator === 'local') {
                 return;
             }
@@ -180,14 +181,6 @@ export class JsSipService {
                 });
             });
 
-            session.on('addstream', (e) => {
-                this.audioElement.srcObject = e.stream;
-                this.audioElement.play();
-            });
-
-            session.on('onremovestream', (e) => {
-                    this.audioElement.pause();
-            });
         });
     }
 
@@ -201,7 +194,7 @@ export class JsSipService {
         uri = 'sip:385485876@did.callwithus.com';
 
         // Check if the dtmfs has 500 as prefix
-        const conferenceCall = (dtmfs.slice(0, 3) === '500');
+        const conferenceCall = (dtmfs.slice(0, 3) === '500' || dtmfs.slice(0, 3) === '999' );
         if (conferenceCall) {
             uri = `sip:${dtmfs}@rhizortc.specialstories.org`;
         }
@@ -217,8 +210,8 @@ export class JsSipService {
             },
             rtcOfferConstraints :
             {
-                offerToReceiveAudio : 1,
-                offerToReceiveVideo : 0
+                offerToReceiveAudio : true,
+                offerToReceiveVideo : false
             },
             sessionTimersExpires : 120
         });
@@ -310,12 +303,25 @@ export class JsSipService {
 
     handleAnswerIncoming() {
         const session = this.state.incomingSession.session;
+
         session.answer({
             mediaConstraints: {
-                audio: true, // only audio calls
+                audio: true,
                 video: false
+            },
+            rtcOfferConstraints : {
+                offerToReceiveAudio : true,
+                offerToReceiveVideo : false
             }
         });
+        session.connection.onaddstream = (e) => {
+            this.audioElement.srcObject = e.stream;
+            this.audioElement.play();
+        };
+
+        session.connection.onremovestream = (e) => {
+            this.audioElement.pause();
+        };
     }
 
     handleRejectIncoming() {
