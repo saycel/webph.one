@@ -51,7 +51,6 @@ export class JsSipService {
         };
         this.socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
         this.audioElement = document.body.appendChild(document.createElement('audio'));
-        console.log('Audio', this.audioElement);
         if (this.settings.socket.via_transport !== 'auto') {
             this.socket.via_transport = this.settings.socket.via_transport;
         }
@@ -174,7 +173,7 @@ export class JsSipService {
                 });
             });
 
-            session.on('accepted', (info) => {
+            session.on('accepted', () => {
                 audioPlayer.stop('ringing');
                 this.setState({
                     session         : session,
@@ -182,9 +181,6 @@ export class JsSipService {
                 });
             });
 
-            session.on('peerconnection', (info) => {
-                console.log('peerconnection', info, session.connection);
-            });
         });
     }
 
@@ -307,7 +303,7 @@ export class JsSipService {
 
     handleAnswerIncoming() {
         const session = this.state.incomingSession.session;
-        
+
         session.answer({
             mediaConstraints: {
                 audio: true,
