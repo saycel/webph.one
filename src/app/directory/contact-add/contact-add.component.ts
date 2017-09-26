@@ -73,7 +73,7 @@ export class ContactAddComponent implements OnInit, OnDestroy {
 
   addContact() {
     if (this.form.status === 'VALID') {
-      this._storageService.table('contcats').create(this.form.value);
+      this._storageService.table('contacts').create(this.form.value);
       this._router.navigate(['/call', this.form.value.number]);
       return;
     }
@@ -81,7 +81,7 @@ export class ContactAddComponent implements OnInit, OnDestroy {
 
   updateContact() {
     if (this.form.status === 'VALID') {
-      this._storageService.table('contcats').update(this.form.value);
+      this._storageService.table('contacts').update(this.form.value);
       this._router.navigate(['/directory']);
       return;
     }
@@ -89,7 +89,7 @@ export class ContactAddComponent implements OnInit, OnDestroy {
 
   deleteContact(event) {
     event.preventDefault();
-    this._storageService.table('contcats').delete(this.form.value);
+    this._storageService.table('contacts').delete(this.form.value);
     this._router.navigate(['/directory']);
   }
 
