@@ -189,14 +189,16 @@ export class JsSipService {
         return;
     }
 
-    handleOutgoingCall(uri, dtmfs) {
+    handleOutgoingCall(uri, dtmfs: string) {
         // CHANGE URI FOR TEST
         uri = 'sip:385485876@did.callwithus.com';
 
-        // Check if the dtmfs has 500 as prefix
-        const conferenceCall = (dtmfs.slice(0, 3) === '500' || dtmfs.slice(0, 3) === '999' );
-        if (conferenceCall) {
+        // Check if the dtmfs has 500 or 999 as prefix
+        const noOnSipCall = (dtmfs.slice(0, 3) === '500' || dtmfs.slice(0, 3) === '999' );
+        if (noOnSipCall) {
             uri = `sip:${dtmfs}@rhizortc.specialstories.org`;
+        } else if ( dtmfs.includes('@') === true ) {
+            uri = dtmfs;
         }
 
         // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
@@ -280,7 +282,7 @@ export class JsSipService {
             this.toneService.stopRinging();
             audioPlayer.play('answered');
 
-            if (!conferenceCall) {
+            if (!noOnSipCall) {
                 setTimeout(() => {
                     const tones = dtmfs + '#';
                     let dtmfSender = null;
