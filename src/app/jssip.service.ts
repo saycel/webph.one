@@ -50,7 +50,6 @@ export class JsSipService {
             incomingSession : null
         };
         this.socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
-        this.audioElement = document.body.appendChild(document.createElement('audio'));
         if (this.settings.socket.via_transport !== 'auto') {
             this.socket.via_transport = this.settings.socket.via_transport;
         }
@@ -171,6 +170,9 @@ export class JsSipService {
                     session         : null,
                     incomingSession : null
                 });
+                this.audioElement.pause();
+                document.body.removeChild(this.audioElement);
+                this.audioElement = null;
             });
 
             session.on('accepted', () => {
@@ -266,10 +268,13 @@ export class JsSipService {
         session.on('ended', () => {
             this.toneService.stopRinging();
             audioPlayer.play('hangup');
+            document.body.removeChild(this.audioElement);
+            this.audioElement = null;
             this.setState({ session: null });
         });
 
         session.connection.onaddstream = (e) => {
+            this.audioElement = document.body.appendChild(document.createElement('audio'));
             this.audioElement.srcObject = e.stream;
             this.audioElement.play();
         };
@@ -317,12 +322,14 @@ export class JsSipService {
             }
         });
         session.connection.onaddstream = (e) => {
+            this.audioElement = document.body.appendChild(document.createElement('audio'));
             this.audioElement.srcObject = e.stream;
             this.audioElement.play();
         };
 
         session.connection.onremovestream = (e) => {
             this.audioElement.pause();
+            console.log('onremovestream');
         };
     }
 
