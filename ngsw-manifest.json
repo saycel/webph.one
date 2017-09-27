@@ -6,7 +6,7 @@
     "index": "/index.html"
   },
   "push": {
-    "showNotifications": true,
+    "showNotifications": false,
     "backgroundOnly": false
   }
 }
