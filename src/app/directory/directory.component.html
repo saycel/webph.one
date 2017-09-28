@@ -1,7 +1,16 @@
-<md-nav-list class="contacts-list">
-  <a md-list-item *ngFor="let item of contacts | async" (click)="call(item)" class="list">
-     <h3 md-line>{{ item.title }}</h3>
-     <h3 md-line>{{ item.subtitle }}</h3>
-     <md-icon svgIcon="call"></md-icon>&nbsp;{{item.number}}
+<h3 *ngIf="user && user.id" class="my-number">
+  My number <span>{{ user.user | phoneNumber }}</span>
+</h3>
+
+<md-nav-list [@toggleState]="contactsToggle" class="contacts-list">
+  <h3 md-subheader (click)="toggleContactsList(contactsToggle)">
+    Contact list
+    <md-icon svgIcon="arrow-down" class="arrow" [@arrowState]="contactsToggle"></md-icon>
+  </h3>  
+  <a md-list-item *ngFor="let item of contacts | async" class="list">
+     <md-icon md-list-icon svgIcon="person" (click)="edit(item)"></md-icon>&nbsp;
+     <h3 md-line><b>{{ item.title }}</b></h3>
+     <h3 md-line>{{ item.subtitle || (item.number | phoneNumber )}}</h3>
+     <md-icon svgIcon="call" (click)="call(item)"></md-icon>
   </a>
 </md-nav-list>

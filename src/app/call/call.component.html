@@ -37,10 +37,3 @@
     <button md-raised-button class="hangup" (click)="hangup()"><md-icon svgIcon="call-end"></md-icon></button>
   </div>
 </div>
-
-<div class="call-in-progess" *ngIf="jsSip.state.session">
-  <div class="box">
-    Calling {{number}}<br><br>
-    <button md-raised-button class="hangup" (click)="hangup()"><md-icon svgIcon="call-end"></md-icon></button>
-  </div>
-</div>
