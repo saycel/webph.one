@@ -1,0 +1,46 @@
+.share-screen {
+  display: flex;
+  width: 100%;
+  height: calc(100% - 65px);
+  max-width: 450px;
+  flex-direction: column;
+  margin: 0 auto;
+}
+
+.contribute {
+    display: flex;
+    flex:2;
+}
+.comments, .share {
+    display: flex;
+    flex:3;
+}
+
+.contribute, .comments, .share {
+    text-align: center;
+    align-content: center;
+    flex-direction: column;
+    color: #1155CD;
+    font-size: 0.9em;
+    h3 {
+        font-size: 1.1em;
+        margin: 25px 10px;
+    }
+    button {
+       width: 80%;
+       max-width: 450px;
+       border-radius: 5px;
+       margin: 0 auto;
+       color: #ffeb3b;
+       border:2px solid #ffeb3b !important;
+       background-color: green !important;
+    }
+    textarea {
+        display: block;
+        width: 80%;
+        height: 40px;
+        margin: 15px auto;
+        max-width: 450px;
+        padding: 10px;
+    }
+}

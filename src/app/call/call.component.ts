@@ -7,6 +7,7 @@ import { ToneService } from '../tone.service';
 import { JsSipService } from '../jssip.service';
 import { StorageService } from '../storage.service';
 import { DirectoryItemI } from '../directory.service';
+import { UserService } from '../user.service';
 
 @Component({
   selector: 'app-call',
@@ -23,7 +24,8 @@ export class CallComponent implements OnInit, OnDestroy {
     public jsSip: JsSipService,
     private route: ActivatedRoute,
     private router: Router,
-    public storageService: StorageService
+    public storageService: StorageService,
+    public userService: UserService
   ) {
     storageService.table('contacts')
       .read()
@@ -75,4 +77,13 @@ export class CallComponent implements OnInit, OnDestroy {
   hangup() {
     this.jsSip.handleHangup();
   }
+
+  takeIncomming() {
+    this.jsSip.handleAnswerIncoming();
+  }
+
+  hangupIncomming() {
+    this.jsSip.handleRejectIncoming();
+  }
+
 }

@@ -11,6 +11,8 @@ export class JsSipService {
     private audioElement: HTMLAudioElement;
     private toneService: ToneService;
     private _ua: any;
+    private init = false;
+
     public settings = {
         display_name        : 'webrtc',
         uri                 : 'webrtc@rhizortc.specialstories.org',
@@ -38,6 +40,7 @@ export class JsSipService {
             AppSecret : null
         }
     };
+    public socket: any;
 
     constructor(toneService: ToneService) {
         this.toneService = new ToneService;
@@ -46,20 +49,27 @@ export class JsSipService {
             session         : null,
             incomingSession : null
         };
-
-        this._ua = null;
-        const socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
+        this.socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
         if (this.settings.socket.via_transport !== 'auto') {
-            socket.via_transport = this.settings.socket.via_transport;
+            this.socket.via_transport = this.settings.socket.via_transport;
         }
+    }
+
+    connect(credentials) {
+        if (!credentials && this.init === true ) {
+            return;
+        }
+        this._ua = null;
+        this.init = true;
 
         try {
+            credentials.uri = (credentials.user) ? credentials.user + '@rhizortc.specialstories.org' : null;
             JsSIP.debug.enable('JsSIP:*');
             this._ua = new JsSIP.UA({
-                uri                 : this.settings.uri,
-                password            : this.settings.password,
-                display_name        : this.settings.display_name,
-                sockets             : [ socket ],
+                uri                 : credentials.uri || this.settings.uri,
+                password            : credentials.password || this.settings.password,
+                display_name        : credentials.user || this.settings.display_name,
+                sockets             : [ this.socket ],
                 registrar_server    : this.settings.registrar_server,
                 contact_uri         : this.settings.contact_uri,
                 authorization_user  : this.settings.authorization_user,
@@ -68,13 +78,19 @@ export class JsSipService {
                 use_preloaded_route : this.settings.use_preloaded_route
             });
 
-            this.audioElement = document.body.appendChild(document.createElement('audio'));
-
         } catch (error) {
             console.log('JsSIP config error', error);
             return;
         }
 
+        // Add events to ua
+        this.addEvents();
+
+        // Start ua
+        this._ua.start();
+    }
+
+    addEvents() {
         this._ua.on('connecting', () => {
             this.setState(
                 {
@@ -138,10 +154,23 @@ export class JsSipService {
                 return;
             }
 
-            audioPlayer.play('ringing');
-            this.setState({ incomingSession: session });
+            audioPlayer.play('ringing', true);
+            this.setState({ incomingSession: data });
 
-            session.on('failed', () => {
+            // Show notification if the app is not in front
+            if (document.hidden === true) {
+                    const a = new Notification('Webph.one - Incoming call', {
+                                body: data.session.remote_identity.display_name,
+                                tag: 'request',
+                                icon: 'assets/icons/android-chrome-192x192.png',
+                            });
+                    a.onclick = function (event) {
+                        window.focus();
+                        a.close();
+                    };
+            }
+
+            session.on('failed', (err) => {
                 audioPlayer.stop('ringing');
                 this.setState({
                     session         : null,
@@ -154,6 +183,9 @@ export class JsSipService {
                     session         : null,
                     incomingSession : null
                 });
+                this.audioElement.pause();
+                document.body.removeChild(this.audioElement);
+                this.audioElement = null;
             });
 
             session.on('accepted', () => {
@@ -163,17 +195,8 @@ export class JsSipService {
                     incomingSession : null
                 });
             });
+
         });
-
-        this._ua.start();
-
-        if (this.settings.callstats.enabled) {
-            /*callstatsjssip(
-                this._ua,
-                this.settings.callstats.AppID,
-                this.settings.callstats.AppSecret
-            );*/
-        }
     }
 
     setState(newState) {
@@ -181,9 +204,13 @@ export class JsSipService {
         return;
     }
 
-    handleOutgoingCall(uri, dtmfs) {
+    handleOutgoingCall(uri, dtmfs: string) {
         // CHANGE URI FOR TEST
         uri = dtmfs + '@sip.rhizomatica.org';
+        if ( dtmfs.includes('@') === true ) {
+            uri = dtmfs;
+        }
+
         // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
         // uri = 'hello@onsip.com';
         const session = this._ua.call(uri, {
@@ -195,8 +222,8 @@ export class JsSipService {
             },
             rtcOfferConstraints :
             {
-                offerToReceiveAudio : 1,
-                offerToReceiveVideo : 0
+                offerToReceiveAudio : true,
+                offerToReceiveVideo : false
             },
             sessionTimersExpires : 120
         });
@@ -249,10 +276,13 @@ export class JsSipService {
         session.on('ended', () => {
             this.toneService.stopRinging();
             audioPlayer.play('hangup');
+            document.body.removeChild(this.audioElement);
+            this.audioElement = null;
             this.setState({ session: null });
         });
 
         session.connection.onaddstream = (e) => {
+            this.audioElement = document.body.appendChild(document.createElement('audio'));
             this.audioElement.srcObject = e.stream;
             this.audioElement.play();
         };
@@ -268,15 +298,34 @@ export class JsSipService {
     }
 
     handleAnswerIncoming() {
-        const session = this.state.incomingSession;
+        const session = this.state.incomingSession.session;
+
         session.answer({
-            pcConfig : this.settings.pcConfig || { iceServers: [] }
+            mediaConstraints: {
+                audio: true,
+                video: false
+            },
+            rtcOfferConstraints : {
+                offerToReceiveAudio : true,
+                offerToReceiveVideo : false
+            }
         });
+        session.connection.onaddstream = (e) => {
+            this.audioElement = document.body.appendChild(document.createElement('audio'));
+            this.audioElement.srcObject = e.stream;
+            this.audioElement.play();
+        };
+
+        session.connection.onremovestream = (e) => {
+            this.audioElement.pause();
+            console.log('onremovestream');
+        };
     }
 
     handleRejectIncoming() {
-        const session = this.state.incomingSession;
-        session.terminate();
+        const session = this.state.incomingSession.session;
+        session.terminate({status_code: 487});
+        audioPlayer.stopAll();
     }
 
     handleHangup() {

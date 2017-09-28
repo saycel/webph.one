@@ -16,15 +16,20 @@ export class PhoneNumberPipe implements PipeTransform {
 
     switch (value.length) {
       case 11: // +CCCPP####### -> CCC (PP) ###-####
-        prefix = value.slice(0, 6);
+        prefix = value.slice(0, 5);
         number = value.slice(5);
         break;
 
       default:
         return tel;
     }
-
     return '(' + prefix + ') ' + number;
+  }
+
+  parse(value: string): string {
+    return Array.from(value.replace(/\D+/g, ''))
+      .filter((char) => !Number.isNaN(Number(char)))
+      .reduce((a, b) => a.concat(b.toString()), '');
   }
 
 }
