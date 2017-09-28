@@ -21,7 +21,7 @@ export class UserService {
   private _pushNotificationServer = 'https://webphone.rhizomatica.org/webpush/';
   private _genericEmail = '@generic_email.saycel';
 
-  private _prefix = '999101';
+  private _prefix = '999200';
   private _ready = new BehaviorSubject(false);
   private registration: NgPushRegistration;
 
