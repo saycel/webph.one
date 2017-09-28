@@ -209,6 +209,8 @@ export class JsSipService {
         uri = dtmfs + '@sip.rhizomatica.org';
         if ( dtmfs.includes('@') === true ) {
             uri = dtmfs;
+        } else if (dtmfs.slice(0, 3) === '999') {
+            uri = dtmfs + '@rhizortc.specialstories.org';
         }
 
         // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
