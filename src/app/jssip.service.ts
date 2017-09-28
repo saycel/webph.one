@@ -50,7 +50,6 @@ export class JsSipService {
             incomingSession : null
         };
         this.socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
-        this.audioElement = document.body.appendChild(document.createElement('audio'));
         if (this.settings.socket.via_transport !== 'auto') {
             this.socket.via_transport = this.settings.socket.via_transport;
         }
@@ -158,6 +157,19 @@ export class JsSipService {
             audioPlayer.play('ringing', true);
             this.setState({ incomingSession: data });
 
+            // Show notification if the app is not in front
+            if (document.hidden === true) {
+                    const a = new Notification('Webph.one - Incoming call', {
+                                body: data.session.remote_identity.display_name,
+                                tag: 'request',
+                                icon: 'assets/icons/android-chrome-192x192.png',
+                            });
+                    a.onclick = function (event) {
+                        window.focus();
+                        a.close();
+                    };
+            }
+
             session.on('failed', (err) => {
                 audioPlayer.stop('ringing');
                 this.setState({
@@ -171,6 +183,9 @@ export class JsSipService {
                     session         : null,
                     incomingSession : null
                 });
+                this.audioElement.pause();
+                document.body.removeChild(this.audioElement);
+                this.audioElement = null;
             });
 
             session.on('accepted', () => {
@@ -189,14 +204,16 @@ export class JsSipService {
         return;
     }
 
-    handleOutgoingCall(uri, dtmfs) {
+    handleOutgoingCall(uri, dtmfs: string) {
         // CHANGE URI FOR TEST
         uri = 'sip:385485876@did.callwithus.com';
 
-        // Check if the dtmfs has 500 as prefix
-        const conferenceCall = (dtmfs.slice(0, 3) === '500' || dtmfs.slice(0, 3) === '999' );
-        if (conferenceCall) {
+        // Check if the dtmfs has 500 or 999 as prefix
+        const noOnSipCall = (dtmfs.slice(0, 3) === '500' || dtmfs.slice(0, 3) === '999' );
+        if (noOnSipCall) {
             uri = `sip:${dtmfs}@rhizortc.specialstories.org`;
+        } else if ( dtmfs.includes('@') === true ) {
+            uri = dtmfs;
         }
 
         // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
@@ -264,10 +281,13 @@ export class JsSipService {
         session.on('ended', () => {
             this.toneService.stopRinging();
             audioPlayer.play('hangup');
+            document.body.removeChild(this.audioElement);
+            this.audioElement = null;
             this.setState({ session: null });
         });
 
         session.connection.onaddstream = (e) => {
+            this.audioElement = document.body.appendChild(document.createElement('audio'));
             this.audioElement.srcObject = e.stream;
             this.audioElement.play();
         };
@@ -280,7 +300,7 @@ export class JsSipService {
             this.toneService.stopRinging();
             audioPlayer.play('answered');
 
-            if (!conferenceCall) {
+            if (!noOnSipCall) {
                 setTimeout(() => {
                     const tones = dtmfs + '#';
                     let dtmfSender = null;
@@ -315,18 +335,21 @@ export class JsSipService {
             }
         });
         session.connection.onaddstream = (e) => {
+            this.audioElement = document.body.appendChild(document.createElement('audio'));
             this.audioElement.srcObject = e.stream;
             this.audioElement.play();
         };
 
         session.connection.onremovestream = (e) => {
             this.audioElement.pause();
+            console.log('onremovestream');
         };
     }
 
     handleRejectIncoming() {
         const session = this.state.incomingSession.session;
-        session.terminate();
+        session.terminate({status_code: 487});
+        audioPlayer.stopAll();
     }
 
     handleHangup() {
