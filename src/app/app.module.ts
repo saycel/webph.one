@@ -20,6 +20,7 @@ import { JsSipService } from './jssip.service';
 import { DirectoryService } from './directory.service';
 import { StorageService } from './storage.service';
 import { UserService } from './user.service';
+import { CallStatusComponent } from './call-status/call-status.component';
 
 export const appRoutes: Routes  = [
   {
@@ -48,7 +49,8 @@ export const appRoutes: Routes  = [
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    CallStatusComponent
   ],
   imports: [
     RouterModule.forRoot(
