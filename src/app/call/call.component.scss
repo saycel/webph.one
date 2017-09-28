@@ -79,23 +79,3 @@
     background: red;
   }
 }
-
-.call-in-progess {
-    position: absolute;
-    top: 0px;
-    left: 0px;
-    height: 100vh;
-    width: 100vw;
-    background: rgba(0,0,0,0.9);
-    color: #fff;
-    text-align: center;
-    .box {
-        padding-top: 40vh;
-        .hangup {
-            background: red;
-        }
-        .take-call {
-            background: green;
-        }
-    }
-}
