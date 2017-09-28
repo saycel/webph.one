@@ -157,6 +157,19 @@ export class JsSipService {
             audioPlayer.play('ringing', true);
             this.setState({ incomingSession: data });
 
+            // Show notification if the app is not in front
+            if (document.hidden === true) {
+                    const a = new Notification('Webph.one - Incoming call', {
+                                body: data.session.remote_identity.display_name,
+                                tag: 'request',
+                                icon: 'assets/icons/android-chrome-192x192.png',
+                            });
+                    a.onclick = function (event) {
+                        window.focus();
+                        a.close();
+                    };
+            }
+
             session.on('failed', (err) => {
                 audioPlayer.stop('ringing');
                 this.setState({
@@ -335,7 +348,8 @@ export class JsSipService {
 
     handleRejectIncoming() {
         const session = this.state.incomingSession.session;
-        session.terminate();
+        session.terminate({status_code: 487});
+        audioPlayer.stopAll();
     }
 
     handleHangup() {
