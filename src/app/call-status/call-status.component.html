@@ -1,16 +1,16 @@
-<div class="call-in-progess" *ngIf="jsSip.state.session">
+<div class="call-in-progess" *ngIf="jsSipState.session">
   <div class="box">
-    Calling {{jsSip.state.session.remote_identity.uri.user}}<br><br>
-    <button md-raised-button class="hangup" (click)="hangup()"><md-icon svgIcon="call-end"></md-icon></button>
+    Calling {{jsSipState.session.remote_identity.uri.user}}<br><br>
+    <button md-raised-button class="hangup" (click)="hangup.emit()"><md-icon svgIcon="call-end"></md-icon></button>
   </div>
 </div>
 
-<div class="call-in-progess call-incomming" *ngIf="jsSip.state.incomingSession">
+<div class="call-in-progess call-incomming" *ngIf="jsSipState.incomingSession">
   <div class="box">
-    {{ jsSip.state.incomingSession.session.remote_identity.display_name }} is calling!<br>
-    <small>{{ jsSip.state.incomingSession.session.remote_identity.user }}</small>
+    {{ jsSipState.incomingSession.session.remote_identity.display_name }} is calling!<br>
+    <small>{{ jsSipState.incomingSession.session.remote_identity.user }}</small>
     <br><br>
-    <button md-raised-button class="take-call" (click)="takeIncomming()"><md-icon svgIcon="call"></md-icon></button>
-    <button md-raised-button class="hangup" (click)="rejectIncomming()"><md-icon svgIcon="call-end"></md-icon></button>
+    <button md-raised-button class="take-call" (click)="take.emit()"><md-icon svgIcon="call"></md-icon></button>
+    <button md-raised-button class="hangup" (click)="reject.emit()"><md-icon svgIcon="call-end"></md-icon></button>
   </div>
 </div>

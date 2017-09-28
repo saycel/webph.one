@@ -1,4 +1,10 @@
-<app-call-status></app-call-status>
+<app-call-status
+  [jsSipState]="jsSip.state"
+  (take)="jsSip.handleAnswerIncoming()"
+  (reject)="jsSip.handleRejectIncoming()"
+  (hangup)="jsSip.handleHangup()"
+></app-call-status>
+
 <nav md-tab-nav-bar class="topbar">
   <a md-tab-link
      *ngFor="let link of links"
