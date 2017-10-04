@@ -1,11 +1,7 @@
 import { Component } from '@angular/core';
-import { Http } from '@angular/http';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { ToneService } from './tone.service';
 import { JsSipService } from './jssip.service';
 import { DirectoryService } from './directory.service';
-import { StorageService, UserI } from './storage.service';
 import { UserService } from './user.service';
 
 import {DomSanitizer} from '@angular/platform-browser';
@@ -17,42 +13,73 @@ import {MdIconRegistry} from '@angular/material';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  links: any[] = [
+  /** This object manages the top navigation bar. */
+  public links: any[] = [
     { label: 'Call', link: '/call' },
     { label: 'Directory', link: '/directory' },
     { label: 'Share', link: '/share' }
   ];
 
-  user: BehaviorSubject<UserI>;
-
   constructor(
-    iconRegistry: MdIconRegistry,
-    sanitizer: DomSanitizer,
-    directoryService: DirectoryService,
+    public iconRegistry: MdIconRegistry,
+    public sanitizer: DomSanitizer,
+    public directoryService: DirectoryService,
     private userService: UserService,
-    public jsSip: JsSipService,
-    public http: Http
+    public jsSip: JsSipService
    ) {
 
-    // Load directory and contacts from localstorage
-    directoryService.get().subscribe();
+    this.loadUser();
+    this.loadDirectory();
+    this.loadIcons([
+      'call-end',
+      'call',
+      'contact-add',
+      'arrow-down',
+      'person'
+    ]);
+  }
 
-    // Obtain the user in localStorage, if none is found, make a register and save it.
-    userService.isReady().subscribe(
+  /**
+   * Load svg files into material-icons
+   * @param icons  Array of svg file names to load, without the extension
+   */
+  loadIcons (icons: string[]) {
+    icons.forEach( icon =>
+      this.iconRegistry
+        .addSvgIcon(
+          icon,
+          this.sanitizer.bypassSecurityTrustResourceUrl('assets/' + icon + '.svg')
+        )
+    );
+  }
+
+  /**
+   * Initialize the user system.
+   * Load the local database and try to recover the user's data.
+   * If they do not exist try to create one automatically.
+   */
+  loadUser () {
+    /** subscribe to de user data service */
+    this.userService.isReady().subscribe(
       (status: boolean) => {
-        if (status === true && userService.isUser() === false) {
-          userService.createUser();
-        } else if (status === true && userService.isUser() === true) {
-          jsSip.connect(userService.userData().getValue());
+        /** If the database is fully loaded and there is no user data */
+        if (status === true && this.userService.isUser() === false) {
+          /** Register user and whait for new user data*/
+          this.userService.createUser();
+        /** If the database is fully loaded and there is user data */
+        } else if (status === true && this.userService.isUser() === true) {
+          /** Start the jsSip connection */
+          this.jsSip.connect(this.userService.userData().getValue());
         }
       }
     );
+  }
 
-
-    iconRegistry.addSvgIcon('call-end', sanitizer.bypassSecurityTrustResourceUrl('assets/call-end.svg'));
-    iconRegistry.addSvgIcon('call', sanitizer.bypassSecurityTrustResourceUrl('assets/call.svg'));
-    iconRegistry.addSvgIcon('contact-add', sanitizer.bypassSecurityTrustResourceUrl('assets/contact-add.svg'));
-    iconRegistry.addSvgIcon('arrow-down', sanitizer.bypassSecurityTrustResourceUrl('assets/arrow-down.svg'));
-    iconRegistry.addSvgIcon('person', sanitizer.bypassSecurityTrustResourceUrl('assets/person.svg'));
+  /**
+   * Initialize the directory system.
+   * Load directory and contacts from localstorage
+   */
+  loadDirectory () {
+    this.directoryService.get().subscribe();
   }
 }
