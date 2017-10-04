@@ -5,7 +5,6 @@ import 'rxjs/add/operator/map';
 import 'rxjs/add/operator/do';
 import 'rxjs/add/observable/of';
 
-
 export interface DirectoryItemI {
   number: number;
   title: string;
@@ -18,6 +17,9 @@ export interface DirectoryI {
 }
 
 @Injectable()
+/**
+ * Simple service, only get direcrory array form directory.json
+ */
 export class DirectoryService {
   obs: Observable<DirectoryI[]>;
   directoryLoaded: DirectoryI[];
