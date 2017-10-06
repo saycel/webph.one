@@ -1,4 +1,5 @@
 <app-call-status
+  *ngIf="jsSip.state.session !== null || jsSip.state.incomingSession !== null"
   [jsSipState]="jsSip.state"
   (take)="jsSip.handleAnswerIncoming()"
   (reject)="jsSip.handleRejectIncoming()"
