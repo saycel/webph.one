@@ -3,7 +3,7 @@ const nodeResolve = require('rollup-plugin-node-resolve');
 const commonJs = require('rollup-plugin-commonjs');
 
 rollup.rollup({
-  entry: './src/service-worker/worker-basic.js',
+  input: './src/service-worker/worker-basic.js',
   plugins: [
     nodeResolve({jsnext: true, main: true}),
     commonJs({
@@ -15,5 +15,5 @@ rollup.rollup({
   ],
 }).then(bundle => bundle.write({
   format: 'iife',
-  dest: 'dist/worker-basic.min.js',
+  file: 'dist/worker-basic.min.js',
 }));
