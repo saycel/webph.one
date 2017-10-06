@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 
 import PouchDB from 'pouchdb';
 import PouchFind from 'pouchdb-find';
-PouchDB.plugin(PouchFind);
-PouchDB.debug.enable('*');
 
 import { DirectoryItemI } from './directory.service';
 import { Observable } from 'rxjs/Observable';
 import 'rxjs/add/observable/fromPromise';
+
+PouchDB.plugin(PouchFind);
+PouchDB.debug.enable('*');
 
 interface DbTableMethods {
   create?: Function;
@@ -31,10 +32,8 @@ export class StorageService {
     table(name: string): DbTableMethods {
         return {
             create: (data) =>
-                Observable.fromPromise(
-                    this._db
-                        .post( Object.assign({}, data, { type: name} ) )
-                )
+                this._db
+                    .post( Object.assign({}, data, { type: name} ) )
             ,
             read: () =>
                 Observable.fromPromise(
