@@ -4,7 +4,27 @@ import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
-import { StorageService, UserI} from './storage.service';
+import { StorageService } from './storage.service';
+
+export interface AuthKeysI {
+  auth: string;
+  p256dh: string;
+}
+
+export interface PushDataI {
+  endpoint: string;
+  expirationTime?: string;
+  keys: AuthKeysI;
+  p256dh: string;
+}
+
+export interface UserI {
+  email?: string;
+  user?: string;
+  password?: string;
+  id?: string;
+  push?: PushDataI;
+}
 
 interface KamailioUserI {
   pwd: string;
@@ -33,11 +53,10 @@ export class UserService {
     _storageService
       .table('user')
       .read()
-      .subscribe( x => {
-       if (x.length > 0) {
-          this._user.next(x[1]);
-          this._ready.next(true);
-       }
+      .subscribe( (x: UserI[]) => {
+          if (x.length > 0) {
+            this._user.next(x[0]);
+          }
       });
   }
 
@@ -73,12 +92,8 @@ export class UserService {
     this.subscribeToPush(user);
   }
 
-  isReady() {
-    return this._ready;
-  }
-
   isUser() {
-    return this._user.getValue() !== undefined;
+    return typeof this._user.getValue().user !== 'undefined';
   }
 
   subscribeToPush(user: UserI) {

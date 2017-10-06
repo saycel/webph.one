@@ -1,8 +1,8 @@
 import { Component, OnDestroy, trigger, state, animate, transition, style } from '@angular/core';
 import { Router } from '@angular/router';
 import { DirectoryService, DirectoryI, DirectoryItemI } from '../directory.service';
-import { StorageService, UserI } from '../storage.service';
-import { UserService } from '../user.service';
+import { StorageService } from '../storage.service';
+import { UserService, UserI } from '../user.service';
 
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
@@ -56,8 +56,7 @@ export class DirectoryComponent implements OnDestroy {
     this.contacts = storageService
       .table('contacts')
       .read()
-      .takeUntil(this.ngUnsubscribe)
-      .asObservable();
+      .takeUntil(this.ngUnsubscribe);
   }
 
   ngOnDestroy() {
@@ -74,7 +73,7 @@ export class DirectoryComponent implements OnDestroy {
   }
 
   edit(contact: DirectoryItemI) {
-    this._router.navigate(['/directory', 'edit', contact.id]);
+    this._router.navigate(['/directory', 'edit', contact._id]);
   }
 
   toggleContactsList(value: boolean) {

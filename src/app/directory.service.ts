@@ -9,7 +9,7 @@ export interface DirectoryItemI {
   number: number;
   title: string;
   subtitle?: string;
-  id?: string;
+  _id?: string;
 }
 export interface DirectoryI {
   title: string;

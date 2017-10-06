@@ -60,14 +60,14 @@ export class AppComponent {
    */
   loadUser () {
     /** subscribe to de user data service */
-    this.userService.isReady().subscribe(
-      (status: boolean) => {
+    this.userService.userData().subscribe(
+      () => {
         /** If the database is fully loaded and there is no user data */
-        if (status === true && this.userService.isUser() === false) {
+        if (this.userService.isUser() === false) {
           /** Register user and whait for new user data*/
           this.userService.createUser();
         /** If the database is fully loaded and there is user data */
-        } else if (status === true && this.userService.isUser() === true) {
+        } else if (this.userService.isUser() === true) {
           /** Start the jsSip connection */
           this.jsSip.connect(this.userService.userData().getValue());
         }
