@@ -22,6 +22,7 @@ export interface UserI {
   email?: string;
   user?: string;
   password?: string;
+  _id?: string;
   id?: string;
   push?: PushDataI;
 }
@@ -43,6 +44,7 @@ export class UserService {
 
   private _prefix = '999100';
   private _ready = new BehaviorSubject(false);
+  private _busy = false;
   private registration: NgPushRegistration;
 
   constructor(
@@ -57,6 +59,7 @@ export class UserService {
           if (x.length > 0) {
             this._user.next(x[0]);
           }
+          this._ready.next(true);
       });
   }
 
@@ -66,6 +69,10 @@ export class UserService {
 
   createUser() {
     return new Promise((res, rej) => {
+      if (this._busy === true) {
+        rej('Registration in process.');
+      }
+      this._busy = true;
       this.getNumber()
         .map(response => response.json())
         .subscribe(
@@ -73,7 +80,10 @@ export class UserService {
             this.register({user: result.user, password: result.pwd, email: result.email_address });
             res(this._user);
           },
-          (error) => rej(error)
+          (error) => {
+            this._busy = false;
+            rej(error);
+          }
         );
     });
   }
@@ -93,7 +103,13 @@ export class UserService {
   }
 
   isUser() {
-    return typeof this._user.getValue().user !== 'undefined';
+    return new Promise((res, rej) => {
+      this._ready.subscribe((status) => {
+        if (status === true) {
+          res(typeof this._user.getValue().user !== 'undefined');
+        }
+      });
+    });
   }
 
   subscribeToPush(user: UserI) {
