@@ -119,15 +119,15 @@ export class AppComponent {
           // User
           const userMigration = new Promise((resUser, rejUser) => {
             if ( data[0] !== null ) {
-              this.storageService.table('user')
-                .read()
-                .take(1)
-                .subscribe(newUserArray => {
-                  if ( newUserArray.length ===  0 && typeof data[0][1] !== 'undefined') {
+              this.userService.isUser().then((status) => {
+                  if ( status ===  false && typeof data[0][1] !== 'undefined') {
                     console.log('DB MIGRATION - User migrated to new db');
                     delete data[0][1].id;
                     this.storageService.table('user').create(data[0][1]).then(resUser);
                     LocalForage.removeItem('user');
+                  } else {
+                    console.log('DB MIGRATION - User found in new and old db');
+                    resUser();
                   }
                 });
             } else {
