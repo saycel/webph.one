@@ -3,13 +3,14 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
+    "preng":"ts-node git.version.ts",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "test": "ng test --watch false",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-prod": "ng build --prod --build-optimizer --aot && node src/service-worker/rollup.js",
+    "build-prod": "npm run ng build --prod --build-optimizer --aot && node src/service-worker/rollup.js",
     "build-sw": "node src/service-worker/rollup.js"
   },
   "private": true,
