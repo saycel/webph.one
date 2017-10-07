@@ -201,6 +201,8 @@ export class JsSipService {
         });
 
         session.on('ended', () => {
+            this.removeSounds();
+            this.clearSessions();
             audioPlayer.play('hangup');
         });
 
