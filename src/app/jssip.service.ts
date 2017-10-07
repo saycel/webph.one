@@ -252,16 +252,21 @@ export class JsSipService {
     incomingNotification(data) {
         audioPlayer.play('ringing', true);
         if (document.hidden === true) {
-            const a = new Notification('Webph.one - Incoming call', {
-                        body: data.session.remote_identity.display_name,
-                        tag: 'request',
-                        icon: 'assets/icons/android-chrome-192x192.png',
-                    });
-            a.onclick = function (event) {
-                window.focus();
-                a.close();
-            };
+            try {
+                const a = new Notification('Webph.one - Incoming call', {
+                            body: data.session.remote_identity.display_name,
+                            tag: 'request',
+                            icon: 'assets/icons/android-chrome-192x192.png',
+                        });
+                a.onclick = function (event) {
+                    window.focus();
+                    a.close();
+                };
+            } catch (error) {
+                console.log('NOTIFICATION ERROR', error);
+            }
         }
+        return;
     }
 
     /**
