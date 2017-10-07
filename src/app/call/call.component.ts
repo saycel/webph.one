@@ -9,6 +9,8 @@ import { StorageService } from '../storage.service';
 import { DirectoryItemI } from '../directory.service';
 import { UserService } from '../user.service';
 
+import { versions } from '../../environments/versions';
+
 @Component({
   selector: 'app-call',
   templateUrl: './call.component.html',
@@ -71,6 +73,10 @@ export class CallComponent implements OnInit, OnDestroy {
   }
 
   call() {
+    if ( this.number === '000000') {
+      this.number = versions.branch + ' - ' + versions.revision;
+      return;
+    }
     this.jsSip.handleOutgoingCall('', this.number);
   }
 
