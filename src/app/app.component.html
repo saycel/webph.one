@@ -6,6 +6,13 @@
   (hangup)="jsSip.handleHangup()"
 ></app-call-status>
 
+<app-call-survey
+  *ngIf="callSurveyService.lastCall !== null"
+  [lastCall]="callSurveyService.lastCall"
+  (clean)="callSurveyService.clean()"
+  (submit)="callSurveyService.submit($event)"
+></app-call-survey>
+
 <nav md-tab-nav-bar class="topbar">
   <a md-tab-link
      *ngFor="let link of links"

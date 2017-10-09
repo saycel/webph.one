@@ -1,0 +1,66 @@
+.survey-box {
+    z-index: 9999;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100vh;
+    width: 100vw;
+    background: rgb(230,230,230);
+    color: #545454;
+    text-align: center;
+    h3 {
+        text-align: center;
+        padding-top:40px;
+    }
+    .close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        md-icon {
+            fill: #333;
+        }
+    }
+    .send {
+        background: green;
+        color: #fff;
+        margin-top: 20px;
+    }
+    md-icon.star {
+        fill: #333;
+    }
+    md-icon.star:hover, 
+    md-icon.selected {
+        fill: yellow;
+    }
+    ul {
+        max-width: 200px;
+        text-align: left;
+        list-style: none;
+        margin: 0 auto;
+        padding-left:0px;
+        font-size: 0.9em;
+    }
+    li::before {
+        content: "⚫ ";
+        padding-right: 10px;
+        color: #ccc
+    }
+    li {
+        margin: 0 0 10px;
+        cursor: pointer;
+    }
+    li:hover {
+        font-weight: bold;
+    }
+    li.selected {
+        font-weight: bolder;
+    }
+    li.selected::before {
+        color: yellow;
+    }
+    .comments {
+        display: block;
+        margin: -20px auto 0;
+        width: 200px;
+    }
+}

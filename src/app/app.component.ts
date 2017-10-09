@@ -3,6 +3,7 @@ import { Component } from '@angular/core';
 import { JsSipService } from './jssip.service';
 import { DirectoryService, DirectoryItemI } from './directory.service';
 import { UserService, UserI } from './user.service';
+import { CallSurveyService } from './call-survey.service';
 
 import {DomSanitizer} from '@angular/platform-browser';
 import {MdIconRegistry} from '@angular/material';
@@ -31,7 +32,8 @@ export class AppComponent {
     public directoryService: DirectoryService,
     private userService: UserService,
     public jsSip: JsSipService,
-    public storageService: StorageService
+    public storageService: StorageService,
+    public callSurveyService: CallSurveyService
    ) {
 
     // Apply migration from the old database.
@@ -44,7 +46,10 @@ export class AppComponent {
       'call',
       'contact-add',
       'arrow-down',
-      'person'
+      'person',
+      'star-full',
+      'star-border',
+      'close'
     ]);
   }
 
