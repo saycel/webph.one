@@ -219,7 +219,7 @@ export class JsSipService {
             audioPlayer.play('answered');
             // If is call type is drmfs send tones after connect
             if (callMethod === 'dtmfs') {
-                setTimeout(() => () => this.dtmfsCall(dtmfs, session), 2000);
+                setTimeout(() => this.dtmfsCall(dtmfs, session), 2000);
             }
         });
     }
