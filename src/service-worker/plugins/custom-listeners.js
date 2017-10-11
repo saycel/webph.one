@@ -3,32 +3,14 @@ export function CustomListeners () {
 }
 
 export class CustomListenersImpl {
-
-  setup (ops) {}
+  setup (ops) {
+    var worker = null;
+  }
 
   constructor (worker) {
-    self.addEventListener('push', function (event) {
-        var payload = event.data.json().notification;
-
-        if ( payload.data.action === 'call-incoming' ) {
-          event.waitUntil(
-            self.registration.showNotification('Webph.one - Incoming call', {
-              body: payload.data.from,
-              vibrate: [200, 100, 200, 100, 200, 100, 400],
-              tag: 'request',
-              icon: 'assets/icons/android-chrome-192x192.png',
-              actions: [
-                { action: 'yes', title: 'Answer' },
-                { action: 'no', title: 'Hang up' }
-              ]
-            })
-          )
-        }
-    });
-
-    self.addEventListener('notificationclick', function (event) {
+    this.worker = worker;
+    addEventListener('notificationclick', function (event) {
       event.notification.close()
-
       if (event.action == 'yes') {
         event.waitUntil(
           clients.openWindow('/#/call').then(function (windowClient) {
@@ -36,9 +18,23 @@ export class CustomListenersImpl {
         )
       }
     })
-
-    self.addEventListener('notificationclose', function (event) {
+    addEventListener('push', function (event) {
+        var payload = event.data.json().notification;
+        console.log('[SW] - Push notification', event.data.json());
+        if ( payload.data.action === 'call-incoming' ) {
+        event.waitUntil(
+          self.registration.showNotification('Webph.one - Incoming call', {
+            body: payload.data.from,
+            vibrate: [200, 100, 200, 100, 200, 100, 400],
+            tag: 'request',
+            icon: 'assets/icons/android-chrome-192x192.png',
+            actions: [
+              { action: 'yes', title: 'Answer' },
+              { action: 'no', title: 'Hang up' }
+            ]
+          })
+        );
+      }
     })
   }
-
 }
