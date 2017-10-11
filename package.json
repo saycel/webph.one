@@ -10,7 +10,7 @@
     "test": "ng test --watch false",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build-prod": "npm run ng build --prod --build-optimizer --aot && node src/service-worker/rollup.js",
+    "build-prod": "ts-node git.version.ts && ng build --prod --build-optimizer --aot && node src/service-worker/rollup.js",
     "build-sw": "node src/service-worker/rollup.js"
   },
   "private": true,
