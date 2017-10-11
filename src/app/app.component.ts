@@ -40,6 +40,7 @@ export class AppComponent {
     this.checkDB().then( () => {
       this.loadUser();
       this.loadDirectory();
+      this.loadPush();
     });
     this.loadIcons([
       'call-end',
@@ -101,6 +102,35 @@ export class AppComponent {
    */
   loadDirectory () {
     this.directoryService.get().subscribe();
+  }
+
+  loadPush() {
+    this.userService.isUser().then((status) => {
+        if ( status ===  true  ) {
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistration()
+            .then( (registration) => {
+              if (registration) {
+                console.log('[SW] - Registration');
+                registration.pushManager.getSubscription()
+                .then( subs => {
+                  if (subs !== null) {
+                    console.log('[SW] - Alredy registerd', subs);
+                  } else {
+                    console.log('[SW] - User not registred', subs);
+                    console.log('[SW] - Send registration', subs);
+                    this.userService.subscribeToPush(this.userService.userData().getValue());
+                  }
+                })
+                .catch( err => console.log('[SW] - Erron on subscription'));
+              } else {
+                console.log('[SW] - Error Registration not found', registration);
+              }
+            })
+            .catch( x => console.log('[SW] - Error', x));
+          }
+        }
+    });
   }
 
   /**
