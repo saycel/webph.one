@@ -253,15 +253,20 @@ export class JsSipService {
         audioPlayer.play('ringing', true);
         if (document.hidden === true) {
             try {
-                const a = new Notification('Webph.one - Incoming call', {
+                console.log('[SW] - Document is hidden - Sending push notification');
+                navigator.serviceWorker.getRegistration()
+                    .then( (registration: any) => {
+                        const a = registration.showNotification('Webph.one - Incoming call', {
                             body: data.session.remote_identity.display_name,
-                            tag: 'request',
+                            vibrate: [200, 100, 200, 100, 200, 100, 400],
+                            tag: 'document-hidden',
                             icon: 'assets/icons/android-chrome-192x192.png',
+                            actions: [
+                            { action: 'yes', title: 'Answer' },
+                            { action: 'no', title: 'Hang up' }
+                            ]
                         });
-                a.onclick = function (event) {
-                    window.focus();
-                    a.close();
-                };
+                    });
             } catch (error) {
                 console.log('NOTIFICATION ERROR', error);
             }
