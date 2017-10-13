@@ -54,6 +54,15 @@ export class CustomListenersImpl {
             ]
           }
         };
+      } else if ( dataParsed.notification.data.action === 'call-canceled' ) {
+        payload = {
+          notification: {
+            title: 'Webph.one - Incoming call canceled',
+            body: dataParsed.notification.data.from,
+            vibrate: [200, 100, 200, 100, 200, 100, 400],
+            icon: 'assets/icons/android-chrome-192x192.png'
+          }
+        };
       } else {
         payload = dataParsed;
       }
