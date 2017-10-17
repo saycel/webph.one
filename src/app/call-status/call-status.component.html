@@ -1,6 +1,6 @@
 <div class="call-in-progess" *ngIf="jsSipState.session">
   <div class="box">
-    Calling {{jsSipState.session.remote_identity.uri.user}}<br><br>
+    Calling {{jsSipState.session.remote_identity.display_name}}<br><br>
     <button md-raised-button class="hangup" (click)="hangup.emit()"><md-icon svgIcon="call-end"></md-icon></button>
   </div>
 </div>

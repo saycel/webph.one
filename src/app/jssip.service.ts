@@ -160,6 +160,7 @@ export class JsSipService {
 
         session.on('connecting', () => {
             this.toneService.startRinging();
+            session.remote_identity.display_name = dtmfs;
             this.setState({ session });
         });
 
