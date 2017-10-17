@@ -251,7 +251,7 @@ export class JsSipService {
      * @param data Incoming rtc session
      */
     incomingNotification(data) {
-        audioPlayer.play('ringing', true);
+        this.toneService.startRinging();
         if (document.hidden === true) {
             try {
                 console.log('[SW] - Document is hidden - Sending push notification');
