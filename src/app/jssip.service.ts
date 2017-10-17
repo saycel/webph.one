@@ -119,7 +119,7 @@ export class JsSipService {
         });
 
         data.session.on('accepted', () => {
-            audioPlayer.stop('ringing');
+            this.toneService.stopRinging();
             this.setState({
                 session         : data.session,
                 incomingSession : null
