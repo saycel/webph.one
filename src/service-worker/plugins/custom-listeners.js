@@ -32,10 +32,11 @@ export class CustomListenersImpl {
         event.waitUntil(
           self.clients.matchAll({ type: 'window' }).then(clientList => {
             if (clientList.length > 0) {
-              clientList[0].focus();
+              clientList[0].navigate('/#/call/answer/true')
+                 .then(client => client.focus());
             }
             else {
-              self.clients.openWindow('/#/call');
+              self.clients.openWindow('/#/call/answer/true');
             }
           })
         )
