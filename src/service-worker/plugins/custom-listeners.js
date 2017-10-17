@@ -30,11 +30,9 @@ export class CustomListenersImpl {
       console.log('[SW] - Notification event', event.notification)
       if (event.action == 'yes') {
         event.waitUntil(
-          self.clients.matchAll({ type: 'window' }).then(clientList => {
-            event.notification.close();
+            self.clients.matchAll({ type: 'window' }).then(clientList => {
             if (clientList.length > 0) {
-              clientList[0].navigate('/#/call/answer/true')
-              clientLIst[0].focus()
+              return clientLIst[0].focus()
             }
             else {
               return self.clients.openWindow('/');

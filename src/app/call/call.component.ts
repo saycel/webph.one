@@ -18,7 +18,6 @@ import { versions } from '../../environments/versions';
 })
 export class CallComponent implements OnInit, OnDestroy {
   number = '';
-  autoanswer = false;
   contacts: DirectoryItemI[] = [];
   private ngUnsubscribe: Subject<void> = new Subject<void>(); // = new Subject(); in Typescript 2.2-2.4
 
@@ -40,7 +39,7 @@ export class CallComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.number = this.route.snapshot.paramMap.get('number') || '';
-    if (this.route.snapshot.paramMap.get('answer') !== 'undefined') {
+    if (this.route.snapshot.paramMap.get('answer') === 'true') {
         this.jsSip.setState({ autoanswer: true });
         this.router.navigate(['/call']);
     }
