@@ -44,8 +44,14 @@ export class CustomListenersImpl {
 
   push(data) {
     var payload;
+    var important = false;
     try {
       var dataParsed = JSON.parse(data);
+
+      if (dataParsed.notification.tag && dataParsed.notification.tag === 'document-hidden' ) {
+        important = true;
+      }
+
       if ( dataParsed.notification.data.action === 'call-incoming' ) {
         payload = {
           notification: {
@@ -80,7 +86,7 @@ export class CustomListenersImpl {
       };
     }
     console.log('[SW] - Push notification', payload);
-    this.showNotification(payload)
+    this.showNotification(payload, important)
     if (this.buffer !== null) {
       this.buffer.push(payload);
     }
@@ -116,10 +122,10 @@ export class CustomListenersImpl {
       }
   }
 
-  showNotification (data) {
+  showNotification (data, important) {
     self.clients.matchAll({ type: 'window' }).then(clientList => {
       console.log('[SW] - Not show notifications on clients opens', clientList);
-      if (clientList.length > 0) { 
+      if (clientList.length > 0 && important === false) { 
         return;
       }
 
