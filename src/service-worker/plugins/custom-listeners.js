@@ -29,7 +29,13 @@ export class CustomListenersImpl {
       event.notification.close()
       if (event.action == 'yes') {
         event.waitUntil(
-          clients.openWindow('/#/call').then(function (windowClient) {
+          self.clients.matchAll({ type: 'window' }).then(clientList => {
+            if (clientList.length > 0) {
+              clientList[0].focus();
+            }
+            else {
+              self.clients.openWindow('/#/call');
+            }
           })
         )
       }
@@ -111,15 +117,23 @@ export class CustomListenersImpl {
   }
 
   showNotification (data) {
-        if (!data.notification || !data.notification.title) {
-            return;
-        }
-        var desc = data.notification;
-        var options = {};
-        NOTIFICATION_OPTION_NAMES
-            .filter(function (name) { return desc.hasOwnProperty(name); })
-            .forEach(function (name) { return options[name] = desc[name]; });
-        this.worker.showNotification(desc['title'], options);
-    };
+    self.clients.matchAll({ type: 'window' }).then(clientList => {
+      console.log('[SW] - Not show notifications on clients opens', clientList);
+      if (clientList.length > 0) { 
+        return;
+      }
+
+      if (!data.notification || !data.notification.title) {
+          return;
+      }
+
+      var desc = data.notification;
+      var options = {};
+      NOTIFICATION_OPTION_NAMES
+          .filter(function (name) { return desc.hasOwnProperty(name); })
+          .forEach(function (name) { return options[name] = desc[name]; });
+      this.worker.showNotification(desc['title'], options);
+    })
+  }
 
 }
