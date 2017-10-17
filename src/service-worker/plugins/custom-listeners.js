@@ -27,16 +27,22 @@ export class CustomListenersImpl {
 
     self.addEventListener('notificationclick', function (event) {
       event.notification.close()
+      console.log('[SW] - Notification event', event.notification)
       if (event.action == 'yes') {
         event.waitUntil(
           self.clients.matchAll({ type: 'window' }).then(clientList => {
             if (clientList.length > 0) {
-              clientList[0].focus();
+              clientList[0].navigate('/#/call/answer/true')
+                 .then(client => client.focus());
             }
             else {
-              self.clients.openWindow('/#/call');
+              self.clients.openWindow('/#/call/answer/true');
             }
           })
+        )
+      } else if (event.action === 'no' && event.notification.tag !== 'document-hidden') {
+        event.waitUntil(
+            fetch('https://webphone.rhizomatica.org/webpush/reject/' + event.notification.data.id, {mode: 'cors'})
         )
       }
     })
@@ -51,14 +57,15 @@ export class CustomListenersImpl {
       if (dataParsed.notification.tag && dataParsed.notification.tag === 'document-hidden' ) {
         important = true;
       }
-
+      console.log('[SW] - Row notification', dataParsed);
       if ( dataParsed.notification.data.action === 'call-incoming' ) {
         payload = {
           notification: {
             title: 'Webph.one - Incoming call',
             body: dataParsed.notification.data.from,
+            data: {id : dataParsed.notification.data.id },
             vibrate: [200, 100, 200, 100, 200, 100, 400],
-            tag: 'request',
+            tag: dataParsed.notification.tag || 'request',
             icon: 'assets/icons/android-chrome-192x192.png',
             actions: [
               { action: 'yes', title: 'Answer' },
