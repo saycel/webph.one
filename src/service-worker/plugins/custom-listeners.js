@@ -31,12 +31,13 @@ export class CustomListenersImpl {
       if (event.action == 'yes') {
         event.waitUntil(
           self.clients.matchAll({ type: 'window' }).then(clientList => {
+            event.notification.close();
             if (clientList.length > 0) {
               clientList[0].navigate('/#/call/answer/true')
-                 .then(client => client.focus());
+              clientLIst[0].focus()
             }
             else {
-              self.clients.openWindow('/#/call/answer/true');
+              return self.clients.openWindow('/');
             }
           })
         )
