@@ -1,12 +1,21 @@
 import FILES from './sounds';
 
+const createAudio = (file) => {
+    const audio = document.createElement('audio');
+    audio.src = file;
+    audio.autoplay = true;
+    audio.volume = 0;
+    document.body.appendChild(audio);
+    return audio;
+};
+
 let SOUNDS = [
-     {playing: null, name: 'answered', audio: new Audio(FILES['answered']), volume: 1.0 },
-     {playing: null, name: 'rejected', audio: new Audio(FILES['rejected']), volume: 0.5 },
-     {playing: null, name: 'hangup', audio: new Audio(FILES['hangup']),  volume: 1.0 },
-     {playing: null, name: 'ringing', audio: new Audio(FILES['hangup']),  volume: 1.0 },
-     {playing: null, name: 'error_404', audio: new Audio(FILES['error_404']),  volume: 1.0 },
-     {playing: null, name: 'error_general', audio: new Audio(FILES['error_general']),  volume: 1.0 }
+     {playing: null, name: 'answered', audio: createAudio(FILES['answered']), volume: 1.0 },
+     {playing: null, name: 'rejected', audio: createAudio(FILES['rejected']), volume: 0.5 },
+     {playing: null, name: 'hangup', audio: createAudio(FILES['hangup']),  volume: 1.0 },
+     {playing: null, name: 'ringing', audio: createAudio(FILES['hangup']),  volume: 1.0 },
+     {playing: null, name: 'error_404', audio: createAudio(FILES['error_404']),  volume: 1.0 },
+     {playing: null, name: 'error_general', audio: createAudio(FILES['error_general']),  volume: 1.0 }
 ];
 
 let initialized = false;
@@ -22,8 +31,17 @@ export default {
 
         for (const sound of SOUNDS)
         {
-            sound.audio.volume = 0;
-            try { sound.audio.play(); } catch (error) {}
+            try { sound.audio.play()
+                .then( _ => {
+                    sound.playing = true;
+                    console.log('[SOUND SERVICE] - Init sound ' + sound.name, _ );
+                })
+                .catch((err) => {
+                    console.log('[SOUND SERVICE] - Error on init ' + sound.name, err );
+                });
+            } catch (err) {
+                console.log('[SOUND SERVICE] - Error on init ' + sound.name, err );
+            }
         }
         initialized = true;
     },
@@ -48,7 +66,14 @@ export default {
             }
             sound.audio.volume = (sound.volume || 1.0);
             sound.audio.loop = loop;
-            sound.audio.play().then( _ => sound.playing = true );
+            sound.audio.play()
+                .then( _ => {
+                    sound.playing = true;
+                    console.log('[SOUND SERVICE] - Play ' + sound.name, _ );
+                })
+                .catch((err) => {
+                    console.log('[SOUND SERVICE] - Error on ' + sound.name, err );
+                });
             return sound.audio;
         } catch (error) {
         }

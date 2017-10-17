@@ -22,6 +22,7 @@ export class JsSipService {
     };
 
     constructor(public toneService: ToneService) {
+        audioPlayer.initialize();
     }
 
     setState(newState) {
