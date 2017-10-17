@@ -18,7 +18,8 @@ export class JsSipService {
         status          : 'disconnected',
         session         : null,
         ringing         : false,
-        incomingSession : null
+        incomingSession : null,
+        autoanswer      : false
     };
 
     constructor(public toneService: ToneService) {
@@ -137,6 +138,11 @@ export class JsSipService {
             // Start ringing and set the incoming session in the state
             this.incomingNotification(data);
             this.setState({ incomingSession: data });
+        }
+
+        if ( this.state.autoanswer === true ) {
+            this.handleAnswerIncoming();
+            this.setState({ autoanswer: false });
         }
     }
 
