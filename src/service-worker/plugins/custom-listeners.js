@@ -28,23 +28,40 @@ export class CustomListenersImpl {
     self.addEventListener('notificationclick', function (event) {
       event.notification.close()
       console.log('[SW] - Notification event', event.notification)
-      if (event.action == 'yes') {
+      //Notification from Foreground
+      if(event.notification.tag === 'document-hidden') {
         event.waitUntil(
-            self.clients.matchAll({ type: 'window' }).then(clientList => {
+          clients.matchAll({ type: 'window' }).then(clientList => {
             if (clientList.length > 0) {
-              return clientLIst[0].focus()
-            }
-            else {
-              return self.clients.openWindow('/');
+              //Yes to foreground
+              if (event.action == 'yes') {  
+                clientList[0].postMessage({autoanswer: true});
+                return clientList[0].focus()
+              } 
+              //No to foreground
+              else {
+                return clientList[0].postMessage({autoreject: true});
+              }
             }
           })
         )
-      } else if (event.action === 'no' && event.notification.tag !== 'document-hidden') {
-        event.waitUntil(
-            fetch('https://webphone.rhizomatica.org/webpush/reject/' + event.notification.data.id, {mode: 'cors'})
-        )
       }
-    })
+      //Notification from Backend
+      else {
+        //Yes
+        if (event.action == 'yes') {  
+          event.waitUntil(
+            clients.openWindow('https://pearlcel.webph.one/#/call/answer/true')
+          )
+        }
+        //No
+        else {
+          event.waitUntil(
+            fetch('https://webphone.rhizomatica.org/webpush/reject/' + event.notification.data.id, {mode: 'cors'})
+          )
+        }
+      }
+    });
   }
 
   push(data) {

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { JsSipService } from './jssip.service';
 import { DirectoryService, DirectoryItemI } from './directory.service';
@@ -33,7 +34,9 @@ export class AppComponent {
     private userService: UserService,
     public jsSip: JsSipService,
     public storageService: StorageService,
-    public callSurveyService: CallSurveyService
+    public callSurveyService: CallSurveyService,
+    private route: ActivatedRoute,
+    private router: Router,
    ) {
 
     // Apply migration from the old database.
@@ -52,6 +55,16 @@ export class AppComponent {
       'star-border',
       'close'
     ]);
+
+    // Listen for autoanswer and autoreject messages
+    navigator.serviceWorker.addEventListener('message', x => {
+      if ( typeof x.data.autoanswer !== 'undefined' && x.data.autoanswer === true) {
+        setTimeout(() => this.jsSip.handleAnswerIncoming(), 2000);
+      }
+      if ( typeof x.data.autoreject !== 'undefined' && x.data.autoreject === true) {
+        this.jsSip.handleRejectIncoming();
+      }
+    });
   }
 
   /**
