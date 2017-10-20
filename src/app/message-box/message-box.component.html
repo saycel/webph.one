@@ -1,0 +1,3 @@
+<div class="messagebox" *ngIf="(msg !== null)" [@toast] (click)="clearNotification()">
+  <p>{{msg.text}}</p>
+</div>

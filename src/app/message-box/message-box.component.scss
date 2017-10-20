@@ -1,0 +1,14 @@
+.messagebox{ 
+    position: absolute;
+    z-index: 10000;
+    width: 80%;
+    background: rgba(0,0,0,0.8);
+    border-radius: 2px;
+    margin: 10px calc(10% - 5px);
+    color: #fff;
+    text-align: center;
+    padding: 5px;
+}
+.messagebox p {
+    margin: 10px 5px
+}
