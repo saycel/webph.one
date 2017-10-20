@@ -1,6 +1,11 @@
 <div class="call-in-progess" *ngIf="jsSipState.session">
   <div class="box">
-    Calling {{jsSipState.session.remote_identity.display_name}}<br><br>
+      <div *ngIf="jsSipState.session.status !== 9">
+        Calling {{jsSipState.session.remote_identity.display_name}}<br><br>
+      </div>
+      <div *ngIf="jsSipState.session.status === 9">
+        Call established with {{jsSipState.session.remote_identity.display_name}}<br><br>
+      </div>
     <button md-raised-button class="hangup" (click)="hangup.emit()"><md-icon svgIcon="call-end"></md-icon></button>
   </div>
 </div>
