@@ -3,6 +3,7 @@ import { NgServiceWorker, NgPushRegistration } from '@angular/service-worker';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
+import { GuiNotificationsService } from './gui-notifications.service';
 
 import { StorageService } from './storage.service';
 
@@ -50,7 +51,8 @@ export class UserService {
   constructor(
     private _storageService: StorageService,
     private _http: Http,
-    private _ngServiceWorker: NgServiceWorker
+    private _ngServiceWorker: NgServiceWorker,
+    private _guiNotification: GuiNotificationsService
     ) {
     _storageService
       .table('user')
@@ -123,7 +125,13 @@ export class UserService {
           this.sendRegistration(r, user);
         },
         err => {
-          console.error('error registering for push', err);
+          if ( err ) {
+            console.log('[PUSH NOTIFICATIONS] - Error on registration', err); 
+            this._guiNotification.send({
+              text:'You have denied permission to show notifications. This permission is used to let you know when there is an incoming call when you have the application closed or in the background.',
+              timeout: 10000
+            });
+          }
         }
       );
     });
