@@ -34,14 +34,17 @@ export class CustomListenersImpl {
           clients.matchAll({ type: 'window' }).then(clientList => {
             if (clientList.length > 0) {
               //Yes to foreground
-              if (event.action == 'yes') {  
+              if (event.action === 'yes') {  
                 clientList[0].postMessage({autoanswer: true});
                 return clientList[0].focus()
               } 
               //No to foreground
-              else {
+              else if (event.action === 'no'){
                 return clientList[0].postMessage({autoreject: true});
               }
+              else {  
+                return clientList[0].focus()
+              } 
             }
           })
         )
@@ -49,15 +52,20 @@ export class CustomListenersImpl {
       //Notification from Backend
       else {
         //Yes
-        if (event.action == 'yes') {  
+        if (event.action === 'yes') {  
           event.waitUntil(
             clients.openWindow('https://pearlcel.webph.one/#/call/answer/true')
           )
         }
         //No
-        else {
+        else if (event.action === 'no') {
           event.waitUntil(
             fetch('https://webphone.rhizomatica.org/webpush/reject/' + event.notification.data.id, {mode: 'cors'})
+          )
+        }
+        else {
+          event.waitUntil(
+            clients.openWindow('https://pearlcel.webph.one/#/call')
           )
         }
       }
