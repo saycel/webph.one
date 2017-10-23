@@ -18,12 +18,6 @@ export const settings = {
         rtcpMuxPolicy : 'negotiate',
         iceServers    :  []
     },
-    callstats           :
-    {
-        enabled   : false,
-        AppID     : null,
-        AppSecret : null
-    },
     answer:
     {
         mediaConstraints: {
