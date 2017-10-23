@@ -59,11 +59,17 @@ export class CallComponent implements OnInit, OnDestroy {
     this.router.navigate(['/directory', 'add', number]);
   }
 
-  @HostListener('document:keypress', ['$event'])
+  @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     const reg = new RegExp('^[0-9]');
     if (reg.test(event.key)) {
       this.pushItem(event.key);
+    }
+    else if (event.key === 'Enter') {
+      this.call();
+    }
+    else if (event.keyCode === 8 && this.number.length > 0) {
+      this.number = this.number.slice(0, -1);
     }
   }
 
