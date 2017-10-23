@@ -31,9 +31,6 @@ export class ShareComponent implements OnInit {
   share(service: string) {
     let url: string;
     switch (service) {
-      case 'sms':
-        url = 'sms://?body=' + encodeURIComponent(this.message + ' ' + this.href);
-      break;
       case 'whatsapp':
         url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(this.message + ' ' + this.href);
       break;
