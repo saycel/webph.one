@@ -49,9 +49,13 @@ Observable
             {encoding: 'utf8'}
         );
 
-        fs.writeFileSync(
-            'dist/version.json',
-            contentJson,
-            {encoding: 'utf8'}
-        );
+        try {
+            fs.writeFileSync(
+                'dist/version.json',
+                contentJson,
+                {encoding: 'utf8'}
+            );
+        } catch (e) {
+            // do nothing
+        }
     });

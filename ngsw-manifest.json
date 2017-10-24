@@ -1,6 +1,7 @@
 {
   "static.ignore": [
-    "^\/assets\/ignore.*$"
+    "^\/assets\/ignore.*$",
+    ".json$"
   ],
   "routing": {
     "index": "/index.html"
