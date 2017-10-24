@@ -5,6 +5,7 @@ import { JsSipService } from './jssip.service';
 import { DirectoryService, DirectoryItemI } from './directory.service';
 import { UserService, UserI } from './user.service';
 import { CallSurveyService } from './call-survey.service';
+import { GuiNotificationsService } from './gui-notifications.service';
 
 import {DomSanitizer} from '@angular/platform-browser';
 import {MdIconRegistry} from '@angular/material';
@@ -35,6 +36,7 @@ export class AppComponent {
     public jsSip: JsSipService,
     public storageService: StorageService,
     public callSurveyService: CallSurveyService,
+    public notificationsGui: GuiNotificationsService,
     private route: ActivatedRoute,
     private router: Router,
    ) {
@@ -95,7 +97,9 @@ export class AppComponent {
         this.userService.isUser().then( status => {
           if (status === false) {
             /** Register user and whait for new user data*/
-            this.userService.createUser().catch(console.log);
+            this.firstTimeMessage();
+            this.userService.createUser()
+              .catch(console.log);
           /** If the database is fully loaded and there is user data */
           } else if (status === true) {
             /** Start the jsSip connection */
@@ -201,5 +205,14 @@ export class AppComponent {
         })
         .catch(rej);
     });
+  }
+
+  firstTimeMessage() {
+    if (navigator.userAgent.match(/Android/i) && navigator.userAgent.match(/Mobile/i)) {
+      setTimeout(() => this.notificationsGui.send({text: `Your browser may not automatically
+      offer you the option to add a shortcut to this application. You can do it manually by
+      selecting the options in the upper right corner, and then in the "Add to home screen"`,
+      timeout: 10000}), 12000);
+    }
   }
 }
