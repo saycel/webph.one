@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "preng":"ts-node git.version.ts",
+    "preng": "ts-node git.version.ts",
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
@@ -31,7 +31,7 @@
     "core-js": "^2.5.1",
     "hammer-timejs": "^1.1.0",
     "hammerjs": "^2.0.8",
-    "jssip": "^3.0.15",
+    "jssip": "3.0.18",
     "localforage": "^1.5.0",
     "pouchdb": "^6.3.4",
     "pouchdb-find": "^6.3.4",
