@@ -150,12 +150,14 @@ export class JsSipService {
         // Get call method
         const callMethod = this.checkPrefixs(dtmfs, this.settings.custom);
         // Format uri
+        const cs = this.settings.custom;
         switch (callMethod) {
-            case 'virtual':     uri = `sip:${dtmfs}@${this.settings.custom.defaultUtiDomain}`; break;
-            case 'conference':  uri = `sip:${dtmfs}@${this.settings.custom.defaultUtiDomain}`; break;
+            case 'virtual':     uri = `sip:${dtmfs}@${cs.defaultUtiDomain}`; break;
+            case 'conference':  uri = `sip:${dtmfs}@${cs.defaultUtiDomain}`; break;
             case 'sip':         uri = dtmfs; break;
-            case 'dtmfs':       uri = this.settings.custom.dtmfsGateway; break;
-            default:            uri = `sip:${dtmfs}@${this.settings.custom.defaultUtiDomain}`;
+            case 'dtmfs':       uri = cs.dtmfsGateway; break;
+            case 'outbound':    uri = `sip:${dtmfs}@${cs.defaultUtiDomain};outbound=${cs.outbound}`; break;
+            default:            uri = `sip:${dtmfs}@${cs.defaultUtiDomain}`;
         }
         // Start session
         const session = this._ua.call(uri, {
@@ -332,6 +334,7 @@ export class JsSipService {
         if      ( phoneNumber.includes('@') )                            { return 'sip'; }
         else if ( cs.virtualNumbersPrefixs.filter(isPrefix).length > 0)  { return 'virtual'; }
         else if ( cs.conferenceCallPrefixs.filter(isPrefix).length > 0)  { return 'conference'; }
+        else if ( phoneNumber.length === 5 && cs.outbound)               { return 'outbound'; }
         else if ( cs.dtmfsGateway !== null )                             { return 'dtmfs'; }
 
         return 'standar';

@@ -42,7 +42,8 @@ export const settings = {
     },
     custom:
     {
-        dtmfsGateway: 'sip:385485876@did.callwithus.com',
+        dtmfsGateway: null,
+        outbound: 'peallagoon',
         defaultUtiDomain: 'rhizortc.specialstories.org',
         virtualNumbersPrefixs: [999100, 999200],
         conferenceCallPrefixs: [500]
@@ -50,7 +51,8 @@ export const settings = {
 };
 
 export interface CustomSettingsI {
-    dtmfsGateway: string;
+    dtmfsGateway?: string;
+    outbound?: string;
     defaultUtiDomain: string;
     virtualNumbersPrefixs: number[];
     conferenceCallPrefixs: number[];
