@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Http, RequestOptions, Headers } from '@angular/http';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 
 import { JsSipService } from './jssip.service';
@@ -6,6 +7,7 @@ import { DirectoryService, DirectoryItemI } from './directory.service';
 import { UserService, UserI } from './user.service';
 import { CallSurveyService } from './call-survey.service';
 import { GuiNotificationsService } from './gui-notifications.service';
+import { versions } from '../environments/versions';
 
 import {DomSanitizer} from '@angular/platform-browser';
 import {MdIconRegistry} from '@angular/material';
@@ -39,9 +41,11 @@ export class AppComponent {
     public notificationsGui: GuiNotificationsService,
     private route: ActivatedRoute,
     private router: Router,
+    private http: Http,
    ) {
 
     // Apply migration from the old database.
+    this.checkVersion();
     this.checkDB().then( () => {
       this.loadUser();
       this.loadDirectory();
@@ -215,4 +219,31 @@ export class AppComponent {
       timeout: 10000}), 12000);
     }
   }
+
+  checkVersion() {
+    const headers = new Headers();
+    headers.append('Content-Type', 'application/json; charset=utf-8');
+    headers.append('Cache-Control', 'no-cache');
+    headers.append('Cache-Control', 'no-store');
+    headers.append('If-Modified-Since', 'Mon, 26 Jul 1997 05:00:00 GMT');
+
+    const requestOptions = new RequestOptions({
+      headers: headers,
+      method: 'GET'
+    });
+    this.http.request('version.json', requestOptions).toPromise()
+      .then(x => x.json())
+      .then(version => {
+        console.log('[APP UPDATE] - Check version' , version);
+        if (versions.revision !== version.revision ) {
+          navigator.serviceWorker.getRegistration()
+            .then(registration => registration.update())
+            .then(result => console.log('[APP UPDATE] - Updated' , version));
+        } else {
+          console.log('[APP UPDATE] - You have the current version', version.revision);
+        }
+    }).catch(
+    err => console.log('[APP UPDATE] - Fail to get actual version'));
+  }
+
 }
