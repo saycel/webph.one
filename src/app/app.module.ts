@@ -20,6 +20,10 @@ import { DirectoryService } from './directory.service';
 import { StorageService } from './storage.service';
 import { UserService } from './user.service';
 import { CallStatusComponent } from './call-status/call-status.component';
+import { CallSurveyComponent } from './call-survey/call-survey.component';
+import { CallSurveyService } from './call-survey.service';
+import { MessageBoxComponent } from './message-box/message-box.component';
+import { GuiNotificationsService } from './gui-notifications.service';
 
 export const appRoutes: Routes  = [
   {
@@ -45,7 +49,9 @@ export const appRoutes: Routes  = [
 @NgModule({
   declarations: [
     AppComponent,
-    CallStatusComponent
+    CallStatusComponent,
+    CallSurveyComponent,
+    MessageBoxComponent
   ],
   imports: [
     RouterModule.forRoot(
@@ -62,7 +68,16 @@ export const appRoutes: Routes  = [
     CallModule,
     DirectoryModule
   ],
-  providers: [ToneService, JsSipService, DirectoryService, StorageService, UserService, NgServiceWorker],
+  providers: [
+    ToneService,
+    JsSipService,
+    DirectoryService,
+    StorageService,
+    UserService,
+    NgServiceWorker,
+    CallSurveyService,
+    GuiNotificationsService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

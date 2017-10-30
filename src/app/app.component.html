@@ -1,9 +1,18 @@
+<app-message-box></app-message-box>
 <app-call-status
+  *ngIf="jsSip.state.session !== null || jsSip.state.incomingSession !== null"
   [jsSipState]="jsSip.state"
   (take)="jsSip.handleAnswerIncoming()"
   (reject)="jsSip.handleRejectIncoming()"
   (hangup)="jsSip.handleHangup()"
 ></app-call-status>
+
+<app-call-survey
+  *ngIf="callSurveyService.lastCall !== null"
+  [lastCall]="callSurveyService.lastCall"
+  (clean)="callSurveyService.clean()"
+  (submit)="callSurveyService.submit($event)"
+></app-call-survey>
 
 <nav md-tab-nav-bar class="topbar">
   <a md-tab-link

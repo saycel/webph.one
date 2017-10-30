@@ -9,6 +9,11 @@ const routes: Routes = [{
     pathMatch: 'full'
 },
 {
+    path: 'call/answer/:answer',
+    component: CallComponent,
+    pathMatch: 'full'
+},
+{
     path: 'call/:number',
     component: CallComponent,
     pathMatch: 'full'

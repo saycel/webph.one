@@ -1,69 +1,51 @@
 import { Injectable, Inject } from '@angular/core';
 
 import JsSIP from 'jssip';
+import { settings, CustomSettingsI } from './jssip.config';
 import { Subject } from 'rxjs/Subject';
 import audioPlayer from './sounds.service';
 import { ToneService } from './tone.service';
 
 @Injectable()
 export class JsSipService {
-    public state: any;
-    private audioElement: HTMLAudioElement;
-    private toneService: ToneService;
+    private _audioElement: HTMLAudioElement;
     private _ua: any;
-    private init = false;
-
-    public settings = {
-        display_name        : 'webrtc',
-        uri                 : 'webrtc@rhizortc.specialstories.org',
-        password            : 'verysecret',
-        socket              :
-        {
-            uri           : 'wss://rhizortc.specialstories.org:8443',
-            via_transport : 'auto',
-        },
-        registrar_server    : null,
-        contact_uri         : null,
-        authorization_user  : null,
-        instance_id         : null,
-        session_timers      : true,
-        use_preloaded_route : false,
-        pcConfig            :
-        {
-            rtcpMuxPolicy : 'negotiate',
-            iceServers    :  []
-        },
-        callstats           :
-        {
-            enabled   : false,
-            AppID     : null,
-            AppSecret : null
-        }
-    };
+    public settings = settings;
     public socket: any;
 
-    constructor(toneService: ToneService) {
-        this.toneService = new ToneService;
-        this.state = {
-            status          : 'disconnected',
-            session         : null,
-            incomingSession : null
-        };
+    public state = {
+        init            : false,
+        status          : 'disconnected',
+        session         : null,
+        ringing         : false,
+        incomingSession : null,
+        autoanswer      : false
+    };
+
+    constructor(public toneService: ToneService) {
+        audioPlayer.initialize();
+    }
+
+    setState(newState) {
+        this.state = Object.assign({}, this.state, newState);
+        return;
+    }
+
+    connect(credentials) {
+        // Check credentials and if jsSIP is alredy started
+        if (!credentials && this.state.init === true ) {
+            return;
+        }
+
+        // Start socket
         this.socket = new JsSIP.WebSocketInterface(this.settings.socket.uri);
         if (this.settings.socket.via_transport !== 'auto') {
             this.socket.via_transport = this.settings.socket.via_transport;
         }
-    }
 
-    connect(credentials) {
-        if (!credentials && this.init === true ) {
-            return;
-        }
-        this._ua = null;
-        this.init = true;
-
+        // Setup JsSIP
         try {
-            credentials.uri = (credentials.user) ? credentials.user + '@rhizortc.specialstories.org' : null;
+            credentials.uri = credentials.user + '@' + this.settings.custom.defaultUtiDomain;
             JsSIP.debug.enable('JsSIP:*');
             this._ua = new JsSIP.UA({
                 uri                 : credentials.uri || this.settings.uri,
@@ -78,176 +60,129 @@ export class JsSipService {
                 use_preloaded_route : this.settings.use_preloaded_route
             });
 
+            // Add events to JsSIP
+            this.addEvents(this._ua);
+
+            // Start JsSIP
+            this._ua.start();
+            this.setState({init : true });
+
         } catch (error) {
             console.log('JsSIP config error', error);
             return;
         }
-
-        // Add events to ua
-        this.addEvents();
-
-        // Start ua
-        this._ua.start();
     }
 
-    addEvents() {
-        this._ua.on('connecting', () => {
-            this.setState(
-                {
-                    uri    : this._ua.configuration.uri.toString(),
-                    status : 'connecting'
-                });
-        });
+    addEvents(sipUa) {
+        sipUa.on('connecting', () =>
+            this.setState({ status : 'connecting' }));
 
-        this._ua.on('connected', () => {
+        sipUa.on('connected', () => {
             this.setState({ status: 'connected' });
-            this._ua.register();
+            sipUa.register();
         });
 
-        this._ua.on('disconnected', () => {
-            this.setState({ status: 'disconnected' });
+        sipUa.on('disconnected', () =>
+            this.setState({ status: 'disconnected' }));
+
+        sipUa.on('registered', () =>
+            this.setState({ status: 'registered' }));
+
+        sipUa.on('unregistered', () => {
+            const connected = (sipUa.isConnected()) ? 'connected' : 'disconneted';
+            this.setState({ status:  connected});
         });
 
-        this._ua.on('registered', () => {
-            this.setState({ status: 'registered' });
+        sipUa.on('registrationFailed', (data) => {
+            const connected = (sipUa.isConnected()) ? 'connected' : 'disconneted';
+            this.setState({ status:  connected});
         });
 
-        this._ua.on('registering', () => {
-            console.log('registering');
-        });
-
-        this._ua.on('registrationFailed', () => {
-            console.log('registrationFailed');
-        });
-
-        this._ua.on('unregistered', () => {
-            if (this._ua.isConnected()) {
-                this.setState({ status: 'connected' });
-            } else {
-                this.setState({ status: 'disconnected' });
-            }
-        });
-
-        this._ua.on('registrationFailed', (data) => {
-            if (this._ua.isConnected()) {
-                this.setState({ status: 'connected' });
-            } else {
-                this.setState({ status: 'disconnected' });
-            }
-        });
-
-        this._ua.on('newRTCSession', (data) => {
-            if (data.originator === 'local') {
-                return;
-            }
-
-            const state = this.state;
-            const session = data.session;
-
-            // Avoid if busy or other incoming
-            if (state.session || state.incomingSession) {
-                session.terminate(
-                    {
-                        status_code   : 486,
-                        reason_phrase : 'Busy Here'
-                    });
-                return;
-            }
-
-            audioPlayer.play('ringing', true);
-            this.setState({ incomingSession: data });
-
-            // Show notification if the app is not in front
-            if (document.hidden === true) {
-                    const a = new Notification('Webph.one - Incoming call', {
-                                body: data.session.remote_identity.display_name,
-                                tag: 'request',
-                                icon: 'assets/icons/android-chrome-192x192.png',
-                            });
-                    a.onclick = function (event) {
-                        window.focus();
-                        a.close();
-                    };
-            }
-
-            session.on('failed', (err) => {
-                audioPlayer.stop('ringing');
-                this.setState({
-                    session         : null,
-                    incomingSession : null
-                });
-            });
-
-            session.on('ended', () => {
-                this.setState({
-                    session         : null,
-                    incomingSession : null
-                });
-                this.audioElement.pause();
-                document.body.removeChild(this.audioElement);
-                this.audioElement = null;
-            });
-
-            session.on('accepted', () => {
-                audioPlayer.stop('ringing');
-                this.setState({
-                    session         : session,
-                    incomingSession : null
-                });
-            });
-
+        sipUa.on('newRTCSession', (data) => {
+            if (data.originator === 'local') { return; } // Catch incoming actions only
+            this.handleIncomingCall(data);
         });
     }
 
-    setState(newState) {
-        this.state = Object.assign({}, this.state, newState);
-        return;
+    /**
+     * Handle incomming call events
+     * @param data jsSip data session { session:object, incomingSession: object }
+     */
+    handleIncomingCall(data) {
+        data.session.on('failed', (err) => {
+            this.clearSessions();
+            this.removeSounds();
+        });
+
+        data.session.on('ended', () => {
+            this.clearSessions();
+            this.removeSounds();
+        });
+
+        data.session.on('accepted', () => {
+            this.toneService.stopRinging();
+            this.setState({
+                session         : data.session,
+                incomingSession : null
+            });
+        });
+
+        // Avoid if busy or other incoming
+        if (this.state.session || this.state.incomingSession) {
+            data.session.terminate({
+                status_code   : 486,
+                reason_phrase : 'Busy Here'
+            });
+            return;
+        } else {
+            // Start ringing and set the incoming session in the state
+            this.incomingNotification(data);
+            this.setState({ incomingSession: data });
+        }
+
+        if ( this.state.autoanswer === true ) {
+            this.handleAnswerIncoming();
+            this.setState({ autoanswer: false });
+        }
     }
 
     handleOutgoingCall(uri, dtmfs: string) {
-        // CHANGE URI FOR TEST
-        uri = dtmfs + '@sip.rhizomatica.org';
-        if ( dtmfs.includes('@') === true ) {
-            uri = dtmfs;
-        } else if (dtmfs.slice(0, 3) === '999') {
-            uri = dtmfs + '@rhizortc.specialstories.org';
+        // Get call method
+        const callMethod = this.checkPrefixs(dtmfs, this.settings.custom);
+        // Format uri
+        const cs = this.settings.custom;
+        switch (callMethod) {
+            case 'virtual':     uri = `sip:${dtmfs}@${cs.defaultUtiDomain}`; break;
+            case 'conference':  uri = `sip:${dtmfs}@${cs.defaultUtiDomain}`; break;
+            case 'sip':         uri = dtmfs; break;
+            case 'dtmfs':       uri = cs.dtmfsGateway; break;
+            case 'outbound':    uri = `sip:${dtmfs}@${cs.defaultUtiDomain};outbound=${cs.outbound}`; break;
+            default:            uri = `sip:${dtmfs}@${cs.defaultUtiDomain}`;
         }
-
-        // uri = 'sip:pearllagoon@rhizortc.specialstories.org';
-        // uri = 'hello@onsip.com';
+        // Start session
         const session = this._ua.call(uri, {
-            pcConfig : this.settings.pcConfig || { iceServers: [] },
-            mediaConstraints :
-            {
-                audio : true,
-                video : false
-            },
-            rtcOfferConstraints :
-            {
-                offerToReceiveAudio : true,
-                offerToReceiveVideo : false
-            },
+            pcConfig             : this.settings.pcConfig || { iceServers: [] },
+            mediaConstraints     : this.settings.call.mediaConstraints,
+            rtcOfferConstraints  : this.settings.call.rtcOfferConstraints,
             sessionTimersExpires : 120
         });
 
         session.on('connecting', () => {
             this.toneService.startRinging();
+            session.remote_identity.display_name = dtmfs;
             this.setState({ session });
         });
 
-        session.on('progress', () => {
-        });
-
         session.on('failed', (data) => {
-            this.toneService.stopRinging();
+            this.removeSounds();
             let message: HTMLAudioElement;
 
-            // To keep the screen active while the error message is playing
+            // Keep screen active while the error message is playing
             const addAudioEvent = (audio: HTMLAudioElement) => {
                 const onAudioEnded = (event) => {
-                    this.setState({ session: null });
-                    event.target.currentTime = 0;
+                    this.clearSessions();
                     event.target.removeEventListener('ended', onAudioEnded, false);
+                    message = null;
                 };
                 audio.addEventListener('ended', onAudioEnded);
             };
@@ -264,8 +199,8 @@ export class JsSipService {
                 case JsSIP.C.causes.BUSY:
                     this.toneService.startBusyTone();
                     setTimeout(() => {
-                        this.toneService.stopBusyTone();
-                        this.setState({ session: null });
+                        this.removeSounds();
+                        this.clearSessions();
                     }, 5000);
                     break;
                 default:
@@ -276,69 +211,153 @@ export class JsSipService {
         });
 
         session.on('ended', () => {
-            this.toneService.stopRinging();
+            this.removeSounds();
+            this.clearSessions();
             audioPlayer.play('hangup');
-            document.body.removeChild(this.audioElement);
-            this.audioElement = null;
-            this.setState({ session: null });
         });
 
         session.connection.onaddstream = (e) => {
-            this.audioElement = document.body.appendChild(document.createElement('audio'));
-            this.audioElement.srcObject = e.stream;
-            this.audioElement.play();
+            this.addStream(e);
         };
 
         session.connection.onremovestream = (e) => {
-            this.audioElement.pause();
+          this.removeSounds();
         };
 
         session.on('accepted', () => {
             this.toneService.stopRinging();
             audioPlayer.play('answered');
+            // If is call type is drmfs send tones after connect
+            if (callMethod === 'dtmfs') {
+                setTimeout(() => this.dtmfsCall(dtmfs, session), 2000);
+            }
         });
     }
 
     handleAnswerIncoming() {
-        const session = this.state.incomingSession.session;
-
-        session.answer({
-            mediaConstraints: {
-                audio: true,
-                video: false
-            },
-            rtcOfferConstraints : {
-                offerToReceiveAudio : true,
-                offerToReceiveVideo : false
-            }
-        });
-        session.connection.onaddstream = (e) => {
-            this.audioElement = document.body.appendChild(document.createElement('audio'));
-            this.audioElement.srcObject = e.stream;
-            this.audioElement.play();
-        };
-
-        session.connection.onremovestream = (e) => {
-            this.audioElement.pause();
-            console.log('onremovestream');
-        };
+        this.state.incomingSession.session.answer(this.settings.answer);
+        this.state.incomingSession.session.connection.onaddstream = this.addStream;
+        this.state.incomingSession.session.connection.onremovestream = this.removeSounds;
     }
 
     handleRejectIncoming() {
-        const session = this.state.incomingSession.session;
-        session.terminate({status_code: 487});
-        audioPlayer.stopAll();
+        this.state.incomingSession.session.terminate({status_code: 487});
+        this.clearSessions();
     }
 
     handleHangup() {
-        // If is any tone o sound playing
-        this.toneService.stopAll();
-        audioPlayer.stopAll();
         try {
             this.state.session.terminate();
-            this.setState({ session: null });
-        } catch (err) {
-            this.setState({ session: null });
+        } catch (error) {
+            console.log('Session already finished');
+        }
+        this.removeSounds();
+        this.clearSessions();
+    }
+
+    /**
+     * Notifications on incoming call
+     * @param data Incoming rtc session
+     */
+    incomingNotification(data) {
+        this.toneService.startRinging();
+        if (document.hidden === true) {
+            try {
+                console.log('[SW] - Document is hidden - Sending push notification');
+                navigator.serviceWorker.getRegistration()
+                    .then( (registration: any) => {
+                        const a = registration.showNotification('Webph.one - Incoming call', {
+                            body: data.session.remote_identity.display_name,
+                            vibrate: [200, 100, 200, 100, 200, 100, 400],
+                            tag: 'document-hidden',
+                            icon: 'assets/icons/android-chrome-192x192.png',
+                            actions: [
+                            { action: 'yes', title: 'Answer' },
+                            { action: 'no', title: 'Hang up' }
+                            ]
+                        });
+                    });
+            } catch (error) {
+                console.log('NOTIFICATION ERROR', error);
+            }
+        }
+        return;
+    }
+
+    /**
+     * Set all sessions state to null
+     */
+    clearSessions() {
+        this.setState({
+            session: null,
+            incomingSession: null
+        });
+    }
+
+    /**
+     * Play audio stream
+     * @param e Stream event
+     */
+    addStream(e) {
+        this._audioElement = document.body.appendChild(document.createElement('audio'));
+        this._audioElement.srcObject = e.stream;
+        this._audioElement.play();
+    }
+
+    /**
+     * Stop all sounds and remove audio elements
+     */
+    removeSounds() {
+        // If is ringing
+        this.toneService.stopAll();
+
+        // If is playing a message
+        audioPlayer.stopAll();
+
+        // If an audio element exist
+        if (this._audioElement) {
+            document.body.removeChild(this._audioElement);
+            this._audioElement = null;
+        }
+    }
+
+    /**
+     * Check what type of number is
+     * @param phoneNumber Numbero or uri to call
+     * @param prefixs settings.custom on jssip.config.ts
+     */
+    checkPrefixs (phoneNumber: string, cs: CustomSettingsI) {
+        const isPrefix = (prefix: number) => {
+            return phoneNumber.slice( 0, prefix.toString().length) === prefix.toString();
+        };
+
+        if      ( phoneNumber.includes('@') )                            { return 'sip'; }
+        else if ( cs.virtualNumbersPrefixs.filter(isPrefix).length > 0)  { return 'virtual'; }
+        else if ( cs.conferenceCallPrefixs.filter(isPrefix).length > 0)  { return 'conference'; }
+        else if ( phoneNumber.length === 5 && cs.outbound)               { return 'outbound'; }
+        else if ( cs.dtmfsGateway !== null )                             { return 'dtmfs'; }
+
+        return 'standar';
+    }
+
+    /**
+     * Send tones on jsSip session
+     * @param dtmfs Tones to send
+     * @param session jsSip session
+     */
+    dtmfsCall(dtmfs: string, session: any) {
+        const tones = dtmfs + '#';
+        let dtmfSender = null;
+        if (session.connection.signalingState !== 'closed') {
+            if (session.connection.getSenders) {
+                dtmfSender = session.connection.getSenders()[0].dtmf;
+            } else {
+                const peerconnection = session.connection;
+                const localStream = peerconnection.getLocalStreams()[0];
+                dtmfSender = session.connection.createDTMFSender(localStream.getAudioTracks()[0]);
+            }
+            dtmfSender.insertDTMF(tones, 400, 50);
+            console.log('Sending DTMF codes', tones);
         }
     }
 }
