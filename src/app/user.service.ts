@@ -41,7 +41,7 @@ export class UserService {
   private _user = new BehaviorSubject<UserI>({});
   private _kamailioUrl = 'https://saycel.specialstories.org/cgi-bin/allocatenumber.py';
   private _pushNotificationServer = 'https://webphone.rhizomatica.org/webpush/';
-  private _genericEmail = '@generic_email.saycel';
+  private _genericEmail = '@generic_email.rhizomatica';
 
   private _prefix = '999200';
   private _ready = new BehaviorSubject(false);
