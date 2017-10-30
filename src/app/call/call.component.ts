@@ -9,6 +9,8 @@ import { StorageService } from '../storage.service';
 import { DirectoryItemI } from '../directory.service';
 import { UserService } from '../user.service';
 
+import { versions } from '../../environments/versions';
+
 @Component({
   selector: 'app-call',
   templateUrl: './call.component.html',
@@ -37,6 +39,10 @@ export class CallComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.number = this.route.snapshot.paramMap.get('number') || '';
+    if (this.route.snapshot.paramMap.get('answer') === 'true') {
+        this.jsSip.setState({ autoanswer: true });
+        this.router.navigate(['/call']);
+    }
   }
 
   ngOnDestroy() {
@@ -53,11 +59,17 @@ export class CallComponent implements OnInit, OnDestroy {
     this.router.navigate(['/directory', 'add', number]);
   }
 
-  @HostListener('document:keypress', ['$event'])
+  @HostListener('document:keydown', ['$event'])
   handleKeyboardEvent(event: KeyboardEvent) {
     const reg = new RegExp('^[0-9]');
     if (reg.test(event.key)) {
       this.pushItem(event.key);
+    }
+    else if (event.key === 'Enter') {
+      this.call();
+    }
+    else if (event.keyCode === 8 && this.number.length > 0) {
+      this.number = this.number.slice(0, -1);
     }
   }
 
@@ -71,6 +83,10 @@ export class CallComponent implements OnInit, OnDestroy {
   }
 
   call() {
+    if ( this.number === '000000') {
+      this.number = versions.branch + ' - ' + versions.revision;
+      return;
+    }
     this.jsSip.handleOutgoingCall('', this.number);
   }
 

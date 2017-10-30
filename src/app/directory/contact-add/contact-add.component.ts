@@ -51,15 +51,20 @@ export class ContactAddComponent implements OnInit, OnDestroy {
   }
 
   initEdit() {
-    this.form.addControl('id', new FormControl(this._activateRoute.snapshot.paramMap.get('number')));
+    this.form.addControl('_id', new FormControl(this._activateRoute.snapshot.paramMap.get('number')));
     this._storageService.table('contacts')
       .read()
       .takeUntil(this.ngUnsubscribe)
       .map(contacts => contacts
-        .filter(contact => contact.id === this.form.value.id)
+        .filter(contact => contact._id === this.form.value._id)
         .reduce((a, b) => a = b, {}))
       .subscribe(contact => {
-        this.form.setValue(Object.assign({}, this.form.value, contact));
+        console.log(contact);
+        this.form.setValue({
+          title: contact.title,
+          number: contact.number,
+          _id: contact._id,
+        });
       });
   }
 

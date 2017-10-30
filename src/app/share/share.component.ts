@@ -1,7 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import { Router } from '@angular/router';
+import { Http } from '@angular/http';
 
+import { versions } from '../../environments/versions';
+import { UserService, UserI } from '../user.service';
+import { GuiNotificationsService } from '../gui-notifications.service';
 import { ShareDialogComponent } from './share.dialog.component';
 
 @Component({
@@ -11,7 +15,13 @@ import { ShareDialogComponent } from './share.dialog.component';
 })
 export class ShareComponent implements OnInit {
 
-  constructor(public dialog: MdDialog, private router: Router) { }
+  constructor(
+    public dialog: MdDialog,
+    private router: Router,
+    private _http: Http,
+    private _userService: UserService,
+    private _guiNotifications: GuiNotificationsService
+  ) { }
 
   message = 'Try webph.one';
   href: string;
@@ -31,9 +41,6 @@ export class ShareComponent implements OnInit {
   share(service: string) {
     let url: string;
     switch (service) {
-      case 'sms':
-        url = 'sms://?body=' + encodeURIComponent(this.message + ' ' + this.href);
-      break;
       case 'whatsapp':
         url = 'https://api.whatsapp.com/send?text=' + encodeURIComponent(this.message + ' ' + this.href);
       break;
@@ -50,6 +57,22 @@ export class ShareComponent implements OnInit {
   }
 
   sendComments() {
-    this.comment = '';
+    if (this.comment !== '') {
+      const feedback = Object.assign({}, {
+        comment: this.comment,
+        user: this._userService.userData().getValue().user || 'no-user'
+      }, versions);
+      this._http.post('https://webphone.rhizomatica.org/webpush/feedback', feedback)
+        .subscribe(
+          (x) => {
+            this._guiNotifications.send({text: 'Thank you for your feedback.'});
+            this.comment = '';
+          },
+          (x) => this._guiNotifications.send({text: 'Something went wrong, we could not send the message.'})
+        );
+    }
+    else {
+      this._guiNotifications.send({text: 'Write some comments before sending.'});
+    }
   }
 }
