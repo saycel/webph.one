@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Http } from '@angular/http';
+import { environment } from '../environments/environment';
 
 import { versions } from '../environments/versions';
 
 @Injectable()
 export class CallSurveyService {
   public lastCall: any;
-  private _endpoint = 'https://webphone.rhizomatica.org/webpush/survey';
+  private _endpoint = environment.endpoint + 'survey';
   constructor(private _http: Http) {
     this.lastCall = null;
    }
