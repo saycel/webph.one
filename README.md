@@ -1,5 +1,8 @@
 # webph.one
-SayCel Webph.one - An App for Community Cell Networks
+__SayCel Webph.one - An App for Community Cell Networks__
+<p style="text-align:center"><img src="https://media.giphy.com/media/l1LbYlLPdBc8ZxKBa/giphy.gif"/></p>
+
+___
 
 ## What is this?
 In this repository is the source code of the progressive web app (PWA) developed to be part of the Webph.one system
@@ -8,7 +11,7 @@ The PWA can communicate with the Community Cell Network server, request a virtua
 ## It's not..
 This app is the frontend of a more complex system, with it alone you can not mount a virutal telephone system. It acts as a client for the user and connects with notifications and WebRTC communication services via JsSip.
 
-## Parts that make up the system
+## Parts that make up the app
 This development is done on Angualar (version 4 at the moment). Use:
 * Angular Material for interface components
 * angular-serviceworker + rollup for notifications and cache (will change in version 5 of Angular)
@@ -22,19 +25,19 @@ The recommended development environment is:
 * Fork, clone and install of this repository
 * Run `npm install` after each fetch or pull in which the package.json file changes
 
-The service worker build is currently not integrated with angular-cli (something that in version 5 of Angualr may change). The process is carried out after the Angular build to determine the hash of each file (cahce management). This makes it impossible to generate a service worker when `ng serve` is run, so to test the changes in service worker it is necessary to follow the following steps:
+The service worker build is currently not integrated with angular-cli (something that in version 5 of Angular may change). The process is carried out after the Angular build to determine the hash of each file (cache management). This makes it impossible to generate a service worker when `ng serve` is run, so to test the changes in service worker it is necessary to follow the following steps:
 1) Make a production build of the app (`npm run build-prod`)
 2) Login to ./build and raise a static data server ([http-server](https://www.npmjs.com/package/http-server) for example)
 3) Open the web in the browser, and in the __Development panel> Aplication> Service Worker__ select the option __Update on reload__
 4) In another terminal run `npm run build-sw` every time you want to publish a service worker change
- 5) Refresh the web to install the new service worker.
+5) Refresh the web to install the new service worker.
 
 ### Variables and configurations
 There are two places that centralize the possible configurations of the app: __src/app/jssip.config.ts__ and the files inside the folder __src/environments__
 
 #### jssip.config.ts
 Most of them respond to the standard configuration of jsSip (you can see the information on your website), the "custom" elements are this:
-```javascript
+```
 {
     ...
     custom:
@@ -48,7 +51,6 @@ Most of them respond to the standard configuration of jsSip (you can see the inf
 
             // Domain to add to calls that have none.
             defaultUtiDomain: 'rhizortc.specialstories.org',
-
 
             // Array of special prefix codes to identify when the call is to a virutal number.
             virtualNumbersPrefixs: [999100, 999200],
