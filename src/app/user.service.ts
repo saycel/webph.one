@@ -4,6 +4,8 @@ import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Observable';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { GuiNotificationsService } from './gui-notifications.service';
+import { environment } from '../environments/environment';
+import { settings } from './jssip.config';
 
 import { StorageService } from './storage.service';
 
@@ -39,11 +41,11 @@ interface KamailioUserI {
 @Injectable()
 export class UserService {
   private _user = new BehaviorSubject<UserI>({});
-  private _kamailioUrl = 'https://saycel.specialstories.org/cgi-bin/allocatenumber.py';
-  private _pushNotificationServer = 'https://webphone.rhizomatica.org/webpush/';
-  private _genericEmail = '@generic_email.saycel';
+  private _kamailioUrl = environment.kamailioNewNumber;
+  private _pushNotificationServer = environment.endpoint;
+  private _genericEmail = settings.custom.fakeEmail;
 
-  private _prefix = '999100';
+  private _prefix = settings.custom.virtualNumberPrefix;
   private _ready = new BehaviorSubject(false);
   private _busy = false;
   private registration: NgPushRegistration;
@@ -84,6 +86,7 @@ export class UserService {
           },
           (error) => {
             this._busy = false;
+            this._guiNotification.send({text: 'We could not assign your new phone number. Reload the app later.'});
             rej(error);
           }
         );

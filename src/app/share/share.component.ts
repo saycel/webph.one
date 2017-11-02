@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import {MdDialog, MdDialogRef} from '@angular/material';
 import { Router } from '@angular/router';
 import { Http } from '@angular/http';
+import { environment } from '../../environments/environment';
 
 import { versions } from '../../environments/versions';
 import { UserService, UserI } from '../user.service';
@@ -62,7 +63,7 @@ export class ShareComponent implements OnInit {
         comment: this.comment,
         user: this._userService.userData().getValue().user || 'no-user'
       }, versions);
-      this._http.post('https://webphone.rhizomatica.org/webpush/feedback', feedback)
+      this._http.post(environment.endpoint + 'feedback', feedback)
         .subscribe(
           (x) => {
             this._guiNotifications.send({text: 'Thank you for your feedback.'});

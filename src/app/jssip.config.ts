@@ -48,7 +48,9 @@ export const settings = {
         outbound: null,
         defaultUtiDomain: 'rhizortc.specialstories.org',
         virtualNumbersPrefixs: [999100, 999200],
-        conferenceCallPrefixs: [500]
+        virtualNumberPrefix: 999111,
+        conferenceCallPrefixs: [500],
+        fakeEmail: '@generic_email.saycel'
     }
 };
 
@@ -57,5 +59,7 @@ export interface CustomSettingsI {
     outbound?: string;
     defaultUtiDomain: string;
     virtualNumbersPrefixs: number[];
+    virtualNumberPrefix: number;
+    fakeEmail: string;
     conferenceCallPrefixs: number[];
 }
