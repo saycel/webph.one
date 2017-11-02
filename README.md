@@ -5,10 +5,11 @@ __SayCel Webph.one - An App for Community Cell Networks__
 ___
 
 ## What is this?
-In this repository is the source code of the progressive web app (PWA) developed to be part of the Webph.one system
+In this repository you will find the source code of the progressive web app (PWA) part of the Webph.one system.
 The PWA can communicate with the Community Cell Network server, request a virtual phone number, store contacts, perform and receive calls and notifications. Also if you access from an Android device you can install it as if it were a native application.
 
 ## It's not..
+
 This app is the frontend of a more complex system, with it alone you can not mount a virutal telephone system. It acts as a client for the user and connects with notifications and WebRTC communication services via JsSip.
 
 ## Parts that make up the app
@@ -21,7 +22,7 @@ This development is done on Angualar (version 4 at the moment). Use:
 
 ## Development environment
 The recommended development environment is:
-* Node 7.5.0 (I recommend installation with nvm)
+* Node 7.5.0 (I recommend installation with [nvm](https://github.com/creationix/nvm))
 * Fork, clone and install of this repository
 * Run `npm install` after each fetch or pull in which the package.json file changes
 
@@ -37,7 +38,7 @@ There are two places that centralize the possible configurations of the app: __s
 
 #### jssip.config.ts
 Most of them respond to the standard configuration of jsSip (you can see the information on your website), the "custom" elements are this:
-```
+```javascript
 {
     ...
     custom:
@@ -73,14 +74,12 @@ Actually there are two fields to use:
 * endpoint -> The url of the webpush-server service
 * kamailioNewNumber -> The url of the service that assigns new numbers.
 
-
-
 ## Travis
-The continuous integration system Travis is configured so that in the face of changes in the branch __develop__ and __rhizomatica__, perform a build. If the build is successful, it deploys the corresponding server. Before the build, a version file is generated that exposes the hash of the commit from which it is being performed. This is useful to be able to identify the bug reports.
+The continuous integration system Travis is configured so that in the face of changes in the branch __develop__ and __rhizomatica__, perform a build. If the build is successful, it deploys the app to the corresponding server. Before the build, a version file is generated that exposes the hash of the commit from which it is being performed. This is used to identify the build for the purpose of bug reporting.
 
 ## Docker
 This repository also includes a Dockerfile file to generate images and containers.
-The docker consists of two parts, one of build (which is based on node 7.5.0) and one of use (nginx). To generate an image, after making the modifications to the necessary variables, you just have to execute:
+The docker consists of two parts, one used for buildinding the app (which is based on node 7.5.0) and the other one to run the app (nginx). To generate the image, after making the modifications to the necessary variables, you just have to execute:
 ```
 docker build -t webphone-app:dev .
 ```
