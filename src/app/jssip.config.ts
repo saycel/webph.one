@@ -48,7 +48,7 @@ export const settings = {
         outbound: null,
         defaultUtiDomain: 'rhizortc.specialstories.org',
         virtualNumbersPrefixs: [999100, 999200],
-        virtualNumberPrefix: 999111,
+        virtualNumberPrefix: 999100,
         conferenceCallPrefixs: [500],
         fakeEmail: '@generic_email.saycel'
     }
