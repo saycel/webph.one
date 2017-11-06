@@ -241,7 +241,11 @@ export class JsSipService {
     }
 
     handleRejectIncoming() {
-        this.state.incomingSession.session.terminate({status_code: 487});
+       try {
+            this.state.incomingSession.session.terminate({status_code: 487});
+        } catch (error) {
+            console.log('Session already finished');
+        }
         this.clearSessions();
     }
 
