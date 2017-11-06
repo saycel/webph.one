@@ -16,7 +16,7 @@ import 'rxjs/add/operator/takeUntil';
   animations: [
     trigger('toggleState', [
       state('true' , style({ maxHeight: '100%' })),
-      state('false', style({ maxHeight: '33px' })),
+      state('false', style({ maxHeight: '38px' })),
       transition('* => *', animate('400ms'))
     ]),
     trigger('arrowState', [
