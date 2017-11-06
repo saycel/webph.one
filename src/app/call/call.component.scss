@@ -5,6 +5,11 @@
   max-width: 450px;
   flex-direction: column;
   margin: 0 auto;
+  .save-contact {
+    width: calc(33% - 12px) !important;
+    text-align: center;
+  }
+
 }
 
 .number {
