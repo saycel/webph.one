@@ -9,11 +9,18 @@
 
 .contribute {
     display: flex;
-    flex:2;
+    p {
+        margin: 10px auto;
+        width: 80%;
+        max-height: 450px;
+    }
 }
-.comments, .share {
+.comments{
     display: flex;
-    flex:3;
+    flex:1;
+}
+.share {
+    display: flex;
 }
 
 .contribute, .comments, .share {
@@ -30,17 +37,31 @@
        width: 80%;
        max-width: 450px;
        border-radius: 5px;
-       margin: 0 auto;
-       color: #ffeb3b;
-       border:2px solid #ffeb3b !important;
+       margin: 20px auto;
+       padding: 8px;
+       color: #fff;
        background-color: green !important;
     }
     textarea {
-        display: block;
-        width: 80%;
-        height: 40px;
+        width: calc( 80% - 25px );
+        flex: 1;
         margin: 15px auto;
-        max-width: 450px;
+        max-width: 425px;
         padding: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        border: 1px solid #999;
+        border-radius: 5px;
+    }
+}
+
+
+@media only screen and (max-height:  485px) {
+    .contribute, .share {
+        height: 0px;
+        overflow: hidden;
+    }
+    button {
+        margin: 10px auto !important;
+        padding: 2px !important;
     }
 }
