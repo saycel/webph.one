@@ -16,8 +16,8 @@ export class PhoneNumberPipe implements PipeTransform {
 
     switch (value.length) {
       case 11: // +CCCPP####### -> CCC (PP) ###-####
-        prefix = value.slice(0, 5);
-        number = value.slice(5);
+        prefix = value.slice(0, 6);
+        number = value.slice(6);
         break;
 
       default:
