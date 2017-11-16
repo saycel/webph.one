@@ -25,6 +25,7 @@
      <md-icon md-list-icon svgIcon="person" (click)="edit(item)"></md-icon>&nbsp;
      <h3 md-line><b>{{ item.title }}</b></h3>
      <h3 md-line>{{ item.subtitle || (item.number | phoneNumber )}}</h3>
-     <md-icon svgIcon="call" (click)="call(item)"></md-icon>
+     <md-icon svgIcon="call" (click)="call(item)"></md-icon>&nbsp;&nbsp;
+     <md-icon svgIcon="sms" (click)="sms(item)"></md-icon>&nbsp;
   </a>
 </md-nav-list>

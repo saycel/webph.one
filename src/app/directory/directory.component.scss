@@ -7,6 +7,9 @@ h3.mat-subheader {
 .list {
     flex: row-reverse !important;
     color: #1155CD;
+    md-icon {
+        width: 30px;
+    }
 }
 .my-number {
     font-size: 1em;

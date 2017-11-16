@@ -76,6 +76,10 @@ export class DirectoryComponent implements OnDestroy {
     this._router.navigate(['/directory', 'edit', contact._id]);
   }
 
+  sms(contact: DirectoryItemI) {
+    this._router.navigate(['/chat', 'conversation', contact.number]);
+  }
+
   toggleContactsList(value: boolean) {
     this.contactsToggle = !this.contactsToggle;
   }
