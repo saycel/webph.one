@@ -1,0 +1,8 @@
+<md-list>
+  <md-list-item  *ngFor="let item of chatItems | async" [class.unread]="item.unread" (click)="goTo(item._id)">
+    <h3 mdLine><span >{{item.from}}</span></h3>
+    <p mdLine>
+      <span> {{item.lastMessage.content}} </span>
+    </p>
+  </md-list-item>
+</md-list>

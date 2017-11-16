@@ -1,0 +1,33 @@
+<div class="chat" [class.fixed-on-top]="fixed" *ngIf="chat">
+  <div class="chat-header">
+    <span>To: <span class="name">{{chatId}}</span></span>
+    <md-icon class="push-right" svgIcon="call" (click)="call()"></md-icon>
+  </div>
+  <div class="conversation">
+    
+    <div *ngFor="let item of chat.messages?.reverse(); let i = index; let first = last;" [class.right]="item.from === chat.myNumber">
+      <div *ngIf="first">
+        <div class="date">
+          <span>{{item.createdAt | date:'shortDate' }}</span>
+        </div>
+      </div>
+      <div *ngIf="!first && isDiferentDate(item.createdAt, chat.messages[i + 1]?.createdAt)">
+        <div class="date">
+          <span>{{item.createdAt | date:'shortDate' }}</span>
+        </div>
+      </div>
+      <div class="message">
+        {{item.content}}
+        <div class="time">{{item.createdAt | date:'shortTime' }}</div>
+      </div>
+      <div class="clear"></div>
+    </div>
+  </div>
+
+  <div class="text-input">
+    <div class="write">
+      <textarea (keyup)="grow($event)" [(ngModel)]="message" placeholder="Message..."></textarea>
+      <a href="javascript:;" (click)="send()" class="write-link send"></a>
+    </div>
+  </div>
+</div>
