@@ -38,7 +38,7 @@ There are two places that centralize the possible configurations of the app: __s
 
 #### jssip.config.ts
 Most of them respond to the standard configuration of jsSip (you can see the information on your website), the "custom" elements are this:
-```javascript
+```
 {
     ...
     custom:
