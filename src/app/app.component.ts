@@ -59,7 +59,8 @@ export class AppComponent {
       'person',
       'star-full',
       'star-border',
-      'close'
+      'close',
+      'sms'
     ]);
 
     // Listen for autoanswer and autoreject messages
