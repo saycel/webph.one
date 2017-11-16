@@ -123,7 +123,7 @@ $to: #039a23;
             height: 15px;
             max-height: 60px;
             resize: none;
-            overflow: hidden;
+            overflow: scroll;
         }
         .send {
             display: inline-block;
@@ -133,10 +133,13 @@ $to: #039a23;
                 height: 30px;
                 margin-left: 11px;
                 content: '';
-                background-image: url('https://s30.postimg.org/nz9dho0pp/send.png');
+                background-image: url('/assets/send.png');
                 background-repeat: no-repeat;
                 background-position: center;
             }
+        }
+        .send.disable {
+            opacity: 0.4;
         }
     }
 }

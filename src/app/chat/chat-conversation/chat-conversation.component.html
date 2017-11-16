@@ -27,7 +27,7 @@
   <div class="text-input">
     <div class="write">
       <textarea (keyup)="grow($event)" [(ngModel)]="message" placeholder="Message..."></textarea>
-      <a href="javascript:;" (click)="send()" class="write-link send"></a>
+      <a href="javascript:;" (click)="send()" class="write-link send" [class.disable]="message === '' || message === null"></a>
     </div>
   </div>
 </div>
