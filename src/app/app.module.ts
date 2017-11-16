@@ -14,6 +14,7 @@ import { AppComponent } from './app.component';
 import { CallModule } from './call/call.module';
 import { DirectoryModule } from './directory/directory.module';
 import { ShareModule } from './share/share.module';
+import { ChatModule } from './chat/chat.module';
 
 import { ToneService } from './tone.service';
 import { JsSipService } from './jssip.service';
@@ -25,6 +26,7 @@ import { CallSurveyComponent } from './call-survey/call-survey.component';
 import { CallSurveyService } from './call-survey.service';
 import { MessageBoxComponent } from './message-box/message-box.component';
 import { GuiNotificationsService } from './gui-notifications.service';
+import { SmsService } from './sms.service';
 
 export const appRoutes: Routes  = [
   {
@@ -43,6 +45,10 @@ export const appRoutes: Routes  = [
   {
     path: 'share',
     loadChildren: './share/share.module#ShareModule'
+  },
+  {
+    path: 'chat',
+    loadChildren: './chat/chat.module#ChatModule'
   },
   {
     path: '**',
@@ -72,7 +78,8 @@ export const appRoutes: Routes  = [
     HttpModule,
     CallModule,
     ShareModule,
-    DirectoryModule
+    DirectoryModule,
+    ChatModule
   ],
   providers: [
     ToneService,
@@ -82,7 +89,8 @@ export const appRoutes: Routes  = [
     UserService,
     NgServiceWorker,
     CallSurveyService,
-    GuiNotificationsService
+    GuiNotificationsService,
+    SmsService,
   ],
   bootstrap: [AppComponent]
 })

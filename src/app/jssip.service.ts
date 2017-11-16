@@ -12,6 +12,7 @@ export class JsSipService {
     private _ua: any;
     public settings = settings;
     public socket: any;
+    public incomingSms = new Subject();
 
     public state = {
         init            : false,
@@ -91,6 +92,11 @@ export class JsSipService {
         sipUa.on('unregistered', () => {
             const connected = (sipUa.isConnected()) ? 'connected' : 'disconneted';
             this.setState({ status:  connected});
+        });
+
+        sipUa.on('newMessage', (data) => {
+            console.log('[SMS] - New Message', data);
+            this.incomingSms.next(data);
         });
 
         sipUa.on('registrationFailed', (data) => {
@@ -363,5 +369,30 @@ export class JsSipService {
             dtmfSender.insertDTMF(tones, 400, 50);
             console.log('Sending DTMF codes', tones);
         }
+    }
+
+    /**
+     * Sends messages
+     * @param messsage Message to send (string)
+     * @param to Addres to send the message
+    */
+    sendMessage(message: string, to: string) {
+        return new Promise((res, rej) => {
+            // If SIP is not connected reject the action
+            if (!this._ua.isConnected()) { rej({error: 'Not connected'}); return; }
+
+            // Makes JsSip handle the promise responses.
+            const eventHandlers = {
+                succeeded: (data) => res(data),
+                failed:    (data) => rej(data)
+            };
+
+            const options = {
+               eventHandlers: eventHandlers
+            };
+
+            // Finaly, send the message.
+            this._ua.sendMessage(to, message, options);
+        });
     }
 }
