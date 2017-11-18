@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ElementRef, OnDestroy } from '@angular/core';
+import { Component, OnInit, HostListener, ElementRef, OnDestroy, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Subject } from 'rxjs/Subject';
 import 'rxjs/add/operator/takeUntil';
@@ -21,6 +21,7 @@ interface ConversationI {
 })
 export class ChatConversationComponent implements OnInit, OnDestroy {
 
+  @ViewChild('conversation', { read: ElementRef }) public conversation: ElementRef;
   private ngUnsubscribe: Subject<void> = new Subject<void>();
   public chat;
   public chatId;
@@ -43,6 +44,7 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
       .takeUntil(this.ngUnsubscribe)
       .subscribe( x => {
         this.chat = x;
+        this.scrollOnMessage();
         this._smsServie.markAsRead(x.chatId);
       });
     console.log('[SMS] - Chat in list', this.chat);
@@ -52,6 +54,12 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.ngUnsubscribe.next();
     this.ngUnsubscribe.complete();
+  }
+
+  scrollOnMessage() {
+    if (this.conversation) {
+      this.conversation.nativeElement.scroll(0, this.conversation.nativeElement.offsetHeight);
+    }
   }
 
   @HostListener('window:scroll', [])

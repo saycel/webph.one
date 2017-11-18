@@ -3,7 +3,7 @@
     <span>To: <span class="name">{{chatId}}</span></span>
     <md-icon class="push-right" svgIcon="call" (click)="call()"></md-icon>
   </div>
-  <div class="conversation">
+  <div class="conversation" #conversation>
     
     <div *ngFor="let item of chat.messages?.reverse(); let i = index; let first = last;" [class.right]="item.from === chat.myNumber">
       <div *ngIf="first">
