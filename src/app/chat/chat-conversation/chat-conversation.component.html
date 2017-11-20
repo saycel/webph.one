@@ -5,7 +5,7 @@
   </div>
   <div class="conversation" #conversation>
     
-    <div *ngFor="let item of chat.messages?.reverse(); let i = index; let first = last;" [class.right]="item.from === chat.myNumber">
+    <div *ngFor="let item of chat.messages; let i = index; let first = last;" [class.right]="item.from === chat.myNumber">
       <div *ngIf="first">
         <div class="date">
           <span>{{item.createdAt | date:'shortDate' }}</span>

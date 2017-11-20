@@ -43,6 +43,9 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
       .getChat(this.chatId)
       .takeUntil(this.ngUnsubscribe)
       .subscribe( x => {
+        if (x.messages) {
+          x.messages = x.messages.reverse();
+        }
         this.chat = x;
         this.scrollOnMessage();
         this._smsServie.markAsRead(x.chatId);
