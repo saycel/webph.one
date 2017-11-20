@@ -5,8 +5,6 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { JsSipService } from './jssip.service';
 import { UserService} from './user.service';
 
-// import { mockChatItems, mockSmsConversations } from './sms.mockdata';
-
 export enum MessageType {
   TEXT = <any>'text'
 }
@@ -42,21 +40,35 @@ export class SmsService {
     private _jsSipServie: JsSipService,
     private _user: UserService
   ) {
-    // this._chatConversations.next(mockSmsConversations);
-    // this._chatsList.next(mockChatItems);
     this._chatConversations.next([]);
     this._chatsList.next([]);
 
     // Link with jsSip service
     this._jsSipServie.incomingSms.subscribe( (data: any) => {
-      const checkOfflineInContent = (content) => content.split('[Offline message').length === 1;
-      if ( data.originator === 'remote' &&  checkOfflineInContent(data.message.content)) {
+
+      const checkOfflineInContent = (rowSms) => {
+        console.log('[SMS] - Row message', rowSms.message.content, rowSms);
+        if (rowSms.message.content.split('[Offline message').length === 1) {
+          return rowSms;
+        }
+        // Remove "[Offline message - " form message contnet
+        let content = rowSms.message.content.replace('[Offline message - ', '');
+        const smsDate = new Date(content.split(']')[0]);
+        smsDate.setTime(smsDate.getTime() - smsDate.getTimezoneOffset() * 60000);
+        content = content.split(']')[1];
+        rowSms.message.content = content;
+        rowSms.message.createdAt = smsDate;
+        return rowSms;
+      };
+
+      if ( data && data.originator !== 'local') {
+        data = checkOfflineInContent(data);
         const message = {
           _id: '' + Date.now(),
           chatId: data.message.remote_identity.uri.user,
           from: data.message.remote_identity.uri.user,
           content: data.message.content,
-          createdAt: Date.now()
+          createdAt: data.message.createdAt || Date.now()
         };
         this.addSms(message, message.chatId);
       }

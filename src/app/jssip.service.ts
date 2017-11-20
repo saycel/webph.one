@@ -2,7 +2,7 @@ import { Injectable, Inject } from '@angular/core';
 
 import JsSIP from 'jssip';
 import { settings, CustomSettingsI } from './jssip.config';
-import { Subject } from 'rxjs/Subject';
+import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import audioPlayer from './sounds.service';
 import { ToneService } from './tone.service';
 
@@ -12,7 +12,7 @@ export class JsSipService {
     private _ua: any;
     public settings = settings;
     public socket: any;
-    public incomingSms = new Subject();
+    public incomingSms = new BehaviorSubject(false);
 
     public state = {
         init            : false,
