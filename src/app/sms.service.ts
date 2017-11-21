@@ -4,7 +4,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 
 import { JsSipService } from './jssip.service';
 import { UserService} from './user.service';
-
+import { GuiNotificationsService } from './gui-notifications.service';
 export enum MessageType {
   TEXT = <any>'text'
 }
@@ -38,7 +38,8 @@ export class SmsService {
   private _chatConversations = new BehaviorSubject<ConversationI[]>([]);
   constructor(
     private _jsSipServie: JsSipService,
-    private _user: UserService
+    private _user: UserService,
+    private _notifications: GuiNotificationsService
   ) {
     this._chatConversations.next([]);
     this._chatsList.next([]);
@@ -86,7 +87,10 @@ export class SmsService {
     };
     this._jsSipServie.sendMessage(message, to)
       .then(data => this.addSms(newMessage, to))
-      .catch(error => console.log('[SMS] - Error sending message', error));
+      .catch(error => {
+        this._notifications.send({text: error.cause || error.error });
+        console.log('[SMS] - Error sending message', error);
+      });
   }
 
   addSms(message: ChatMessageI, chatId: string) {
