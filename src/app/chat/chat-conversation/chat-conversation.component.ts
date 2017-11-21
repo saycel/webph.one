@@ -74,7 +74,11 @@ export class ChatConversationComponent implements OnInit, OnDestroy {
   grow(event) {
     const element = event.target;
     element.style.height = '15px';
+    element.style.overflowY = 'hidden';
     element.style.height = (element.scrollHeight - 20) + 'px';
+    if (element.scrollHeight > 80) {
+      element.style.overflowY = 'scroll';
+    }
   }
 
   send() {
