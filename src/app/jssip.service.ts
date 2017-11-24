@@ -90,13 +90,12 @@ export class JsSipService {
             this.setState({ status: 'registered' }));
 
         sipUa.on('unregistered', () => {
-            const connected = (sipUa.isConnected()) ? 'connected' : 'disconneted';
-            this.setState({ status:  connected});
+            this.setState({ status:  'unregistered'});
         });
 
         sipUa.on('registrationFailed', (data) => {
             const connected = (sipUa.isConnected()) ? 'connected' : 'disconneted';
-            this.setState({ status:  connected});
+            this.setState({ status:  'unregistered'});
         });
 
         sipUa.on('newRTCSession', (data) => {
@@ -149,8 +148,12 @@ export class JsSipService {
 
     handleOutgoingCall(uri, dtmfs: string) {
         // Check sip status
-        if (this.state.status !== 'connected') {
+        if (this.state.status === 'disconnected') {
             this._notifications.send({text: 'Without connection, check if you have Internet or reload the app.'});
+            return;
+        }
+        if (this.state.status !== 'registered') {
+            this._notifications.send({text: 'Please wait a moment until your user starts session.'});
             return;
         }
 
@@ -220,6 +223,7 @@ export class JsSipService {
         session.on('ended', () => {
             this.removeSounds();
             this.clearSessions();
+            alert('Ended!!!');
             audioPlayer.play('hangup');
         });
 
