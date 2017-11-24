@@ -128,7 +128,7 @@ export class JsSipService {
         });
 
         // Avoid if busy or other incoming
-        if (this.state.session || this.state.incomingSession) {
+        if (this.state.session !== null || this.state.incomingSession !== null) {
             data.session.terminate({
                 status_code   : 486,
                 reason_phrase : 'Busy Here'
