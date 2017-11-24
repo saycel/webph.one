@@ -5,6 +5,7 @@ import { settings, CustomSettingsI } from './jssip.config';
 import { Subject } from 'rxjs/Subject';
 import audioPlayer from './sounds.service';
 import { ToneService } from './tone.service';
+import { GuiNotificationsService } from './gui-notifications.service';
 
 @Injectable()
 export class JsSipService {
@@ -22,7 +23,7 @@ export class JsSipService {
         autoanswer      : false
     };
 
-    constructor(public toneService: ToneService) {
+    constructor(public toneService: ToneService, private _notifications: GuiNotificationsService) {
         audioPlayer.initialize();
     }
 
@@ -147,6 +148,12 @@ export class JsSipService {
     }
 
     handleOutgoingCall(uri, dtmfs: string) {
+        // Check sip status
+        if (this.state.status !== 'connected') {
+            this._notifications.send({text: 'Without connection, check if you have Internet or reload the app.'});
+            return;
+        }
+
         // Get call method
         const callMethod = this.checkPrefixs(dtmfs, this.settings.custom);
         // Format uri
