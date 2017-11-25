@@ -109,6 +109,15 @@ export class JsSipService {
      * @param data jsSip data session { session:object, incomingSession: object }
      */
     handleIncomingCall(data) {
+        // Avoid if busy or other incoming
+        if (this.state.session !== null || this.state.incomingSession !== null) {
+            data.session.terminate({
+                status_code   : 486,
+                reason_phrase : 'Busy Here'
+            });
+            return;
+        }
+
         data.session.on('failed', (err) => {
             this.clearSessions();
             this.removeSounds();
@@ -127,18 +136,9 @@ export class JsSipService {
             });
         });
 
-        // Avoid if busy or other incoming
-        if (this.state.session !== null || this.state.incomingSession !== null) {
-            data.session.terminate({
-                status_code   : 486,
-                reason_phrase : 'Busy Here'
-            });
-            return;
-        } else {
-            // Start ringing and set the incoming session in the state
-            this.incomingNotification(data);
-            this.setState({ incomingSession: data });
-        }
+        // Start ringing and set the incoming session in the state
+        this.incomingNotification(data);
+        this.setState({ incomingSession: data });
 
         if ( this.state.autoanswer === true ) {
             this.handleAnswerIncoming();
@@ -223,7 +223,6 @@ export class JsSipService {
         session.on('ended', () => {
             this.removeSounds();
             this.clearSessions();
-            alert('Ended!!!');
             audioPlayer.play('hangup');
         });
 
