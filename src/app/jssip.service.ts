@@ -206,6 +206,10 @@ export class JsSipService {
                     message = audioPlayer.play('rejected');
                     addAudioEvent(message);
                     break;
+                case JsSIP.C.causes.REJECTED:
+                    message = audioPlayer.play('hangup');
+                    addAudioEvent(message);
+                    break;
                 case JsSIP.C.causes.BUSY:
                     this.toneService.startBusyTone();
                     setTimeout(() => {
@@ -252,7 +256,7 @@ export class JsSipService {
 
     handleRejectIncoming() {
        try {
-            this.state.incomingSession.session.terminate({status_code: 487});
+            this.state.incomingSession.session.terminate({status_code: 603});
         } catch (error) {
             console.log('Session already finished');
         }
