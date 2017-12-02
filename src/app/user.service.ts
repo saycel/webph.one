@@ -103,8 +103,10 @@ export class UserService {
   register(user: UserI) {
     this._storageService
       .table('user')
-      .create(user);
-    this.subscribeToPush(user);
+      .create(user)
+      .then(response =>
+        this.subscribeToPush()
+      );
   }
 
   isUser() {
@@ -117,7 +119,7 @@ export class UserService {
     });
   }
 
-  subscribeToPush(user: UserI) {
+  subscribeToPush() {
     this._http.get(this._pushNotificationServer + 'publicKey')
     .map(x => x.json())
     .subscribe(result => {
@@ -125,11 +127,11 @@ export class UserService {
         applicationServerKey: result.key
       }).subscribe(
         (r: NgPushRegistration) => {
-          this.sendRegistration(r, user);
+          this.sendRegistration(r);
         },
         err => {
           if ( err ) {
-            console.log('[PUSH NOTIFICATIONS] - Error on registration', err); 
+            console.log('[PUSH NOTIFICATIONS] - Error on registration', err);
             this._guiNotification.send({
               text:'You have denied permission to show notifications. This permission is used to let you know when there is an incoming call when you have the application closed or in the background.',
               timeout: 10000
@@ -140,7 +142,8 @@ export class UserService {
     });
   }
 
-  sendRegistration(r: NgPushRegistration, user: UserI) {
+  sendRegistration(r: NgPushRegistration) {
+    const user = this._user.getValue();
     const rJson: any = r.toJSON();
     this._http.post(this._pushNotificationServer + 'save', {
       user: user.user,
@@ -151,7 +154,7 @@ export class UserService {
       this._storageService
         .table('user')
         .update(Object.assign({},
-          this._user.getValue(),
+          user,
           { push: rJson }
         ));
     });

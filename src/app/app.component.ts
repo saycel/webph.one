@@ -140,7 +140,7 @@ export class AppComponent {
                   } else {
                     console.log('[SW] - User not registred', subs);
                     console.log('[SW] - Send registration', subs);
-                    this.userService.subscribeToPush(this.userService.userData().getValue());
+                    this.userService.subscribeToPush();
                   }
                 })
                 .catch( err => console.log('[SW] - Erron on subscription'));
