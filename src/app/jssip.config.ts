@@ -47,7 +47,7 @@ export const settings = {
         // outbound: 'peallagoon',
         outbound: null,
         defaultUtiDomain: 'rhizortc.specialstories.org',
-        virtualNumbersPrefixs: [999100, 999200],
+        virtualNumbersPrefixs: [999100, 999200, 505051, 999800, 505052],
         virtualNumberPrefix: 999100,
         conferenceCallPrefixs: [500],
         fakeEmail: '@generic_email.saycel'
