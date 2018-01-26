@@ -45,3 +45,4 @@ Thumbs.db
 src/environments/versions.ts
 
 package-lock.json
+coverage/

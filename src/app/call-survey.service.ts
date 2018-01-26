@@ -15,15 +15,18 @@ export class CallSurveyService {
   clean() {
     console.log('SURVEY - CLEAN');
     this.lastCall = null;
+    return this.lastCall;
   }
 
   set(data) {
     console.log('SURVEY - SET', data);
     this.lastCall = data;
+    return this.lastCall;
   }
 
   submit(event) {
-    this._http.post(this._endpoint, {
+    this.clean();
+    return this._http.post(this._endpoint, {
       rating: event.rating,
       issues: event.issues,
       comments: event.comments,
@@ -31,10 +34,6 @@ export class CallSurveyService {
       user: event.user,
       branch: versions.branch || 'no-branch',
       revision: versions.revision || 'no-revision'
-    }).subscribe(
-      x => console.log('Thanks!!!')
-    );
-
-    this.clean();
+    });
   }
 }

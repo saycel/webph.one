@@ -1,15 +1,11 @@
-import { TestBed, inject } from '@angular/core/testing';
-
 import { GuiNotificationsService } from './gui-notifications.service';
 
-describe('GuiNotificationsService', () => {
-  beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [GuiNotificationsService]
+describe('JsSip service', () => {
+    const notificationService = new GuiNotificationsService();
+    it('should triger a notification', () => {
+        notificationService.get().subscribe(data => {
+            expect(data.text).toEqual('test');
+        });
+        notificationService.send({text: 'test'});
     });
-  });
-
-  it('should be created', inject([GuiNotificationsService], (service: GuiNotificationsService) => {
-    expect(service).toBeTruthy();
-  }));
 });

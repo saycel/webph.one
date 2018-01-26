@@ -27,7 +27,8 @@ export class DirectoryService {
   constructor(_http: Http) {
       this.obs = _http.get('directory.json')
       .map(response => response.json())
-      .do(res => this.directoryLoaded = res);
+      .do(res => this.directoryLoaded = res)
+      .do(console.log);
   }
 
   get(): Observable<DirectoryI[]> {

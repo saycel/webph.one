@@ -26,7 +26,7 @@ export default {
      */
     initialize() {
         if (initialized) {
-            return;
+            return false;
         }
 
         for (const sound of SOUNDS)
@@ -44,6 +44,7 @@ export default {
             }
         }
         initialized = true;
+        return true;
     },
 
     /**
@@ -89,6 +90,7 @@ export default {
             sound.audio.pause();
             sound.playing = null;
         }
+        return;
     },
 
     stopAll() {
