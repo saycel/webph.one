@@ -16,9 +16,13 @@ This app is the frontend of a more complex system, with it alone you can not mou
 The other components are avaliable here:
 
 ● https://github.com/nicopace/webph.one-server
+
 ● https://github.com/saycel/kamailio-config
+
 ● https://github.com/saycel/webpush-server
+
 ● https://github.com/nicopace/allocatenumber-server
+
 
 ## Parts that make up the app
 This development is done on Angualar (version 4 at the moment). Use:
