@@ -13,6 +13,12 @@ The PWA can communicate with the Community Cell Network server, request a virtua
 ## It's not..
 
 This app is the frontend of a more complex system, with it alone you can not mount a virutal telephone system. It acts as a client for the user and connects with notifications and WebRTC communication services via JsSip.
+The other components are avaliable here:
+
+● https://github.com/nicopace/webph.one-server
+● https://github.com/saycel/kamailio-config
+● https://github.com/saycel/webpush-server
+● https://github.com/nicopace/allocatenumber-server
 
 ## Parts that make up the app
 This development is done on Angualar (version 4 at the moment). Use:
