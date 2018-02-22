@@ -7,10 +7,10 @@ __SayCel Webph.one - An App for Community Cell Networks__
 ___
 
 ## What is this project about?
-Webph.one is a project that aims to create seamless communication between Community Cellular Networks with anyone outside that networks who has an internet connection and uses the Webph.one app.
+Webph.one is a project that aims to create seamless communication between Community Cellular Networks with anyone outside that networks who has an internet connection and uses the Webph.one app. Check the [webph.one site](http://webphone.saycel.com/) for more info.
 
-## How does it work? (from users perspective)
-From the perspective of the people into the Community Cellular Networks, they will simply call or text anyone outside the network having the Webph.one app in the same way that they do with the people into the network. The people outside will be able to talk or text anyone into the communities by using the webph.one app.
+## How does it work?
+From the perspective of the people into the Community Cellular Networks, they will simply call or text anyone outside the network having the Webph.one app in the same way that they do with the people into the network. The people outside will be able to talk or text anyone into the communities by using the webph.one app. Find more information in the [project's presentation at FOSDEM 2018](https://fosdem.org/2018/schedule/event/webphone/)
 
 ## Which Community Cellular Networks will be benefited?
 The first targeted communities are those supported by Rhizomatica in México (18 communities) and SayCel in Nicaragua (2 communities), the organizations that initially promoted Webph.one. As the project gets consolidated, we will look for more communities to use it.
