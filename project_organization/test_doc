@@ -1,0 +1,22 @@
+# Backlog for basic chat version
+<b>Objective:</b> allow community users to text within people outside the community.
+<b>Scope:</b>
+
+* Send and receive simple text messages between GSM and App, and App to App.
+
+* Have a “Whatsapp-like” experience
+
+## Phases
+* The hard/tricky/unknown technical stuff to make it work [in progress]
+
+   * Text GSM <--> App
+
+* Basic send and receive on one conversation [in progress]
+
+* Basic navigation [planning]
+
+* Receive messages and notifications
+
+   * Notifications and connectivity scenarios
+
+* Some more details…?
