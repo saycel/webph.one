@@ -5,24 +5,11 @@ Currently, the main step to start collaborating is to <b>join the [list](https:/
 
 Anyway, both if you already spotted where/how to contribute or if you still didn’t, you might find useful the following information:
 
-● Where we are and where we plan to go
+● Where we are and where we plan to go: check [public_plans.md](https://github.com/saycel/webph.one/blob/develop/project_organization/project_plans.md)
 
 ● How we organize the work
 
 ● Who can give you specific support or guidance
-
-## Where we are and where we plan to go
-
-From a high level perspective, last milestones achieved are:
-
-● a controlled release on the SayCel network
-
-● starting the development of the minimum SMS-to-chat version
-
-The <b>next milestone</b> planned is to finish the minimum SMS-to-chat version.
-After that we might look for a version with improvements and fixes without growing the scope.
-
-If you wanna get more detail about what we plan to do, check our <b>product backlog</b> (so far in [GDrive](https://docs.google.com/document/d/1BFrZphkxLSyHxd_TajU3FDdh2doYOLs5CRZD9S6QT2c/edit), next maybe in our wiki)
 
 ## How we organize the work
 
