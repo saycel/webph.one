@@ -2,7 +2,6 @@
 [![Coverage Status](https://coveralls.io/repos/github/saycel/webph.one/badge.svg?branch=test-coverage)](https://coveralls.io/github/saycel/webph.one?branch=test-coverage)
 
 __SayCel Webph.one - An App for Community Cell Networks__
-<p style="text-align:center"><img src="https://media.giphy.com/media/l1LbYlLPdBc8ZxKBa/giphy.gif"/></p>
 
 ___
 
